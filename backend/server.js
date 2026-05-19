@@ -1,4 +1,8 @@
 require('dotenv').config();
+
+const connectDB = require("./config/db");
+connectDB();
+
 const express = require('express');
 const cors = require('cors');
 
@@ -13,7 +17,10 @@ app.use('/api/auth', require('./routes/auth'));
 
 // Test route
 app.get('/', (req, res) => {
-  res.json({ message: 'Server is running!' });
+  res.json({
+    message: 'Server is running!', 
+    database: "MongoDB connected"
+  });
 });
 
 const PORT = process.env.PORT || 3000;
