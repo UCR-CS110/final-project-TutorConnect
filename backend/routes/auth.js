@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const usersController = require('../controllers/usersController');
+const requireAuth = require('../middleware/auth');
 
 // Routes
 
@@ -32,7 +33,22 @@ output:
 */
 router.post('/login', usersController.login);
 
+/*
+Logout (POST request)
+input: nothing
+output:
+    message: 'Logout successful'
+*/
+router.post('/logout', requireAuth, usersController.logout);
 
-router.post('/logout', usersController.logout);
+/*
+Me (GET request)
+input: nothing
+output:
+    id: user.id,
+    username: user.username,
+    email: user.email
+*/
+router.get('/me', requireAuth, usersController.me);
 
 module.exports = router;

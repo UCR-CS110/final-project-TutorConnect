@@ -1,12 +1,5 @@
 const bcrypt = require('bcryptjs');
-const jst = require('jsonwebtoken');
 const User = require('../models/User');
-
-const USE_MOCK = true;
-const mockUser = [
-    {username: 'cmak000', email: 'cmak000@ucr.edu', password: 'password000'},
-    {username: 'cmak001', email: 'cmak000@ucr.edu', password: 'password001'}
-];
 
 exports.register = async (req, res) => {
     try {
@@ -35,17 +28,12 @@ exports.register = async (req, res) => {
         // create the user in the database
         const newUser = await User.createUser(name, email, hashedPassword);
 
-        // create a JWT token so the user can be logged in
-        const token = jst.sign(
-            { id: newUser.id }, 
-            process.env.JWT_SECRET, 
-            { expiresIn: '1h' }
-        );
+        // save to session
+        req.session.userID = newUser.id;
 
         // send the response to the client
         res.status(201).json({
             message: 'User registered successfully',
-            token: token,
             user: {
                 id: newUser.id,
                 name: newUser.name,
@@ -81,17 +69,12 @@ exports.login = async (req, res) => {
             return res.status(401).json({ error: 'Invalid username or password' });
         }
 
-        // create a JWT token so the user can be logged in
-        const token = jst.sign(
-            { id: user.id }, 
-            process.env.JWT_SECRET, 
-            { expiresIn: '1h' }
-        );
+        // save to session
+        req.session.userID = user.id;
 
         // send the response to the client
         res.status(200).json({
             message: 'Login successful',
-            token: token,
             user: {
                 id: user.id,
                 name: user.name,
@@ -102,4 +85,47 @@ exports.login = async (req, res) => {
         console.error(error);
         res.status(500).json({ error: 'Login failed' });
     }
+};
+
+exports.logout = async (req, res) => {
+    try {
+        // destroy the session
+        req.session.destroy();
+
+        // clear the cookie
+        res.clearCookie('connect.sid');
+
+        // return the response
+        res.status(200).json({ message: 'Logout successful' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Logout failed' });
+    }
+};
+
+exports.me = async (req, res) => {
+  try {
+    // check if the user is logged in
+    if (!req.session.userId) {
+      return res.status(401).json({ error: 'Not logged in' });
+    }
+
+    // find the user in the database
+    const user = await User.findUserById(req.session.userId);
+
+    // check if the user exists
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // return the response
+    res.status(200).json({
+      id: user.id,
+      username: user.username,
+      email: user.email
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to get user' });
+  }
 };
