@@ -6,7 +6,10 @@ const requireAuth = require('../middleware/auth');
 // Auth routes ('/api/auth/...')
 
 /*
-Register: POST request ('/api/auth/register')
+register: POST request ('/api/auth/register')
+function: Takes in a username, email, and password and creates a new user. the user is saved to the database.
+          A session is created for the user and a cookie is sent back to the client. The session is stored in
+          the database until the user logs out or the session expires.
 input: username, email, password in the body. no cookie needed.
 output:
     message: 'User registered successfully',
@@ -20,7 +23,10 @@ output:
 router.post('/register', authController.register);
 
 /*
-Login: POST request ('/api/auth/login')
+login: POST request ('/api/auth/login')
+function: Takes in a username and password and logs the user in. A session is created for the user and a 
+          cookie is sent back to the client. The session is stored in the database until the user logs 
+          out or the session expires.
 input: username, password in the body. no cookie needed.
 output:
     message: 'User logged in successfully',
@@ -34,7 +40,8 @@ output:
 router.post('/login', authController.login);
 
 /*
-Logout: POST request ('/api/auth/logout')
+logout: POST request ('/api/auth/logout')
+function: Logs the user out. The session is destroyed and the cookie is cleared from the browser.
 input: nothing. must have a cookie with the session id.
 output:
     message: 'Logout successful'
@@ -42,7 +49,8 @@ output:
 router.post('/logout', requireAuth, authController.logout);
 
 /*
-Me: GET request ('/api/auth/me')
+me: GET request ('/api/auth/me')
+logout: Returns the user information for the user that is currently logged in based on the cookie passed in.
 input: nothing. must have a cookie with the session id.
 output:
     id: user.id,
