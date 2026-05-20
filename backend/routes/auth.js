@@ -3,38 +3,38 @@ const router = express.Router();
 const authController = require('../controllers/authController');
 const requireAuth = require('../middleware/auth');
 
-// Routes
+// Auth routes ('/api/auth/...')
 
 /*
-Register (POST request)
+Register: POST request ('/api/auth/register')
 input: username, email, password in the body. no cookie needed.
 output:
     message: 'User registered successfully',
     token: token,
     user: {
         id: newUser.id,
-        name: newUser.name,
+        username: newUser.username,
         email: newUser.email
     }
 */
 router.post('/register', authController.register);
 
 /*
-Login (POST request)
+Login: POST request ('/api/auth/login')
 input: username, password in the body. no cookie needed.
 output:
     message: 'User logged in successfully',
     token: token,
     user: {
         id: user.id,
-        name: user.name,
+        username: user.username,
         email: user.email
     })
 */
 router.post('/login', authController.login);
 
 /*
-Logout (POST request)
+Logout: POST request ('/api/auth/logout')
 input: nothing. must have a cookie with the session id.
 output:
     message: 'Logout successful'
@@ -42,7 +42,7 @@ output:
 router.post('/logout', requireAuth, authController.logout);
 
 /*
-Me (GET request)
+Me: GET request ('/api/auth/me')
 input: nothing. must have a cookie with the session id.
 output:
     id: user.id,

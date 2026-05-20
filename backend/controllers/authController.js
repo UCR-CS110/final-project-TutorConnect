@@ -11,13 +11,13 @@ exports.register = async (req, res) => {
         }
 
         // check if email is already in use
-        const existingUser = await User.findUserByEmail(email);
+        const existingUser = await User.findOne({email: email});
         if (existingUser) {
             return res.status(400).json({ error: 'Email already in use' });
         }
 
         // check if the username is already in use
-        const existingUsername = await User.findUserByUsername(username);
+        const existingUsername = await User.findOne({username: username});
         if (existingUsername) {
             return res.status(400).json({ error: 'Username already in use' });
         }
@@ -26,23 +26,23 @@ exports.register = async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10);
 
         // create the user in the database
-        const newUser = await User.createUser(name, email, hashedPassword);
+        const newUser = await User.create({username: username, email: email, password: hashedPassword});
 
         // save to session
-        req.session.userID = newUser.id;
+        req.session.userId = newUser._id;
 
         // send the response to the client
         res.status(201).json({
             message: 'User registered successfully',
             user: {
-                id: newUser.id,
-                name: newUser.name,
+                id: newUser._id,
+                username: newUser.username,
                 email: newUser.email
             }
         });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: 'Registration failed' });
+        res.status(500).json({ error: 'Registration failed', details: error.message });
     }
 };
 
@@ -56,7 +56,7 @@ exports.login = async (req, res) => {
         }
 
         // find the user in the database
-        const user = await User.findUserByUsername(username);
+        const user = await User.findOne({username: username});
 
         // check if the user exists
         if (!user) {
@@ -70,14 +70,14 @@ exports.login = async (req, res) => {
         }
 
         // save to session
-        req.session.userID = user.id;
+        req.session.userId = user._id;
 
         // send the response to the client
         res.status(200).json({
             message: 'Login successful',
             user: {
                 id: user.id,
-                name: user.name,
+                username: user.username,
                 email: user.email
             }
         });
@@ -111,7 +111,7 @@ exports.me = async (req, res) => {
     }
 
     // find the user in the database
-    const user = await User.findUserById(req.session.userId);
+    const user = await User.findOne({_id: req.session.userId});
 
     // check if the user exists
     if (!user) {
