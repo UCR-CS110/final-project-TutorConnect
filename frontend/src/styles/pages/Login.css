@@ -1,13 +1,11 @@
+/* Login Page Styles */
 body {
     background: none;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
 }
 
-/* Main Content */
-.container {
-    flex: 1;
+.login-container {
+    min-height: 100vh;
+    background: white;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -78,6 +76,22 @@ body {
     cursor: not-allowed;
 }
 
+.error-message {
+    background-color: #e74c3c;
+    color: white;
+    padding: 1rem;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+}
+
+.success-message {
+    background-color: #27ae60;
+    color: white;
+    padding: 1rem;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+}
+
 .signup-link {
     text-align: center;
     margin-top: 1.5rem;
@@ -95,7 +109,6 @@ body {
 }
 
 .loading {
-    display: none;
     text-align: center;
     color: #7f8c8d;
     margin-top: 1rem;
