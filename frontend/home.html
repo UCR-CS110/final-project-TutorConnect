@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TutorConnect - Home</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="home.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav>
+        <div class="navbar-brand">TutorConnect</div>
+        <ul class="navbar-links">
+            <li><a href="home.html" class="active">Home</a></li>
+            <li id="nav-login-link"><a href="login.html">Login</a></li>
+            <li id="nav-profile-link" style="display: none;"><a href="profile.html">Profile</a></li>
+        </ul>
+        <div id="user-section" class="user-info" style="display: none;">
+            <span id="username-display"></span>
+            <button class="logout-btn" onclick="logout()">Logout</button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="hero">
+            <h1>Welcome to TutorConnect</h1>
+            <p>Connect with experienced tutors and accelerate your learning journey</p>
+            <div class="cta-buttons" id="cta-buttons">
+                <a href="login.html" class="btn btn-primary">Get Started</a>
+                <a href="#features" class="btn btn-secondary">Learn More</a>
+            </div>
+        </div>
+
+        <div class="features" id="features">
+            <div class="feature-card">
+                <h3>Find Tutors</h3>
+                <p>Browse a wide selection of qualified tutors in various subjects</p>
+            </div>
+            <div class="feature-card">
+                <h3>Easy Scheduling</h3>
+                <p>Schedule sessions at times that work best for you</p>
+            </div>
+            <div class="feature-card">
+                <h3>Track Progress</h3>
+                <p>Monitor your learning progress with detailed reviews</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="auth.js"></script>
+    <script>
+        // Check if user is logged in on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAuthStatus();
+        });
+
+        function checkAuthStatus() {
+            const user = JSON.parse(localStorage.getItem('user'));
+            const navLoginLink = document.getElementById('nav-login-link');
+            const navProfileLink = document.getElementById('nav-profile-link');
+            const userSection = document.getElementById('user-section');
+            const usernameDisplay = document.getElementById('username-display');
+            const ctaButtons = document.getElementById('cta-buttons');
+
+            if (user) {
+                navLoginLink.style.display = 'none';
+                navProfileLink.style.display = 'block';
+                userSection.style.display = 'flex';
+                usernameDisplay.textContent = `Welcome, ${user.username}!`;
+                if (ctaButtons) {
+                    ctaButtons.innerHTML = '<a href="profile.html" class="btn btn-primary">Go to Profile</a>';
+                }
+            } else {
+                navLoginLink.style.display = 'block';
+                navProfileLink.style.display = 'none';
+                userSection.style.display = 'none';
+            }
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('user');
+                checkAuthStatus();
+                window.location.href = 'home.html';
+            }
+        }
+    </script>
+</body>
+</html>
