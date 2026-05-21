@@ -9,7 +9,7 @@ function Navbar() {
   const handleLogout = () => {
     if (window.confirm('Are you sure you want to logout?')) {
       localStorage.removeItem('user');
-      fetch('http://localhost:3000/api/auth/logout', {
+      fetch('http://localhost:5001/api/auth/logout', {
         method: 'POST',
         credentials: 'include'
       }).then(() => {

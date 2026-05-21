@@ -89,14 +89,23 @@ exports.login = async (req, res) => {
 
 exports.logout = async (req, res) => {
     try {
-        // destroy the session
-        req.session.destroy();
+        // destroy the session with callback to ensure it's properly cleared
+        req.session.destroy((err) => {
+            if (err) {
+                console.error('Session destroy error:', err);
+                return res.status(500).json({ error: 'Logout failed' });
+            }
 
-        // clear the cookie
-        res.clearCookie('connect.sid');
+            // clear the cookie with the same options
+            res.clearCookie('connect.sid', {
+                httpOnly: true,
+                secure: false,
+                path: '/'
+            });
 
-        // return the response
-        res.status(200).json({ message: 'Logout successful' });
+            // return the response
+            res.status(200).json({ message: 'Logout successful' });
+        });
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Logout failed' });
