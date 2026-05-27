@@ -3,7 +3,9 @@ const User = require('../models/User');
 
 exports.register = async (req, res) => {
     try {
-        const { username, email, password } = req.body;
+        const { username, email, password, role = 'student', school = '' } = req.body;
+        const accountRole = role === 'tutor' ? 'tutor' : 'student';
+        const accountSchool = accountRole === 'student' && typeof school === 'string' ? school.trim() : '';
 
         // check if name, email, and password are provided
         if (!username || !email || !password) {
@@ -26,7 +28,13 @@ exports.register = async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10);
 
         // create the user in the database
-        const newUser = await User.create({username: username, email: email, password: hashedPassword});
+        const newUser = await User.create({
+            username: username,
+            email: email,
+            password: hashedPassword,
+            role: accountRole,
+            school: accountSchool
+        });
 
         // save to session
         req.session.userId = newUser._id;
@@ -37,7 +45,9 @@ exports.register = async (req, res) => {
             user: {
                 id: newUser._id,
                 username: newUser.username,
-                email: newUser.email
+                email: newUser.email,
+                role: newUser.role || 'student',
+                school: newUser.school || ''
             }
         });
     } catch (error) {
@@ -78,7 +88,9 @@ exports.login = async (req, res) => {
             user: {
                 id: user.id,
                 username: user.username,
-                email: user.email
+                email: user.email,
+                role: user.role || 'student',
+                school: user.school || ''
             }
         });
     } catch (error) {
@@ -131,7 +143,9 @@ exports.me = async (req, res) => {
     res.status(200).json({
       id: user.id,
       username: user.username,
-      email: user.email
+      email: user.email,
+      role: user.role || 'student',
+      school: user.school || ''
     });
   } catch (error) {
     console.error(error);

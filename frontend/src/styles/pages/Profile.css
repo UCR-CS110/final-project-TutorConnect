@@ -37,9 +37,34 @@ body {
     flex: 1;
 }
 
+.profile-title {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.5rem;
+}
+
 .profile-info h1 {
     color: #2c3e50;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0;
+}
+
+.role-badge {
+    padding: 0.35rem 0.75rem;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+
+.role-badge.student {
+    background-color: #eaf2ff;
+    color: #285f9f;
+}
+
+.role-badge.tutor {
+    background-color: #fff0df;
+    color: #c45a00;
 }
 
 .profile-info p {
@@ -110,6 +135,12 @@ body {
     color: #2c3e50;
     font-size: 1.1rem;
     font-weight: 600;
+}
+
+.quick-actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
 }
 
 .btn {

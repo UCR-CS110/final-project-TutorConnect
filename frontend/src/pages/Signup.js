@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import '../styles/pages/Signup.css';
 
 function Signup() {
+  const location = useLocation();
+  const initialRole = new URLSearchParams(location.search).get('role') === 'tutor' ? 'tutor' : 'student';
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [role, setRole] = useState(initialRole);
+  const [school, setSchool] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
@@ -43,7 +47,7 @@ function Signup() {
           'Content-Type': 'application/json'
         },
         credentials: 'include',
-        body: JSON.stringify({ username, email, password })
+        body: JSON.stringify({ username, email, password, role, school })
       });
 
       const data = await response.json();
@@ -85,6 +89,25 @@ function Signup() {
       <div className="signup-container">
         <div className="signup-card">
           <h2>Create Your Account</h2>
+
+          <div className="role-toggle" aria-label="Choose account type">
+            <button
+              type="button"
+              className={`role-option ${role === 'student' ? 'active' : ''}`}
+              onClick={() => setRole('student')}
+              aria-pressed={role === 'student'}
+            >
+              Student
+            </button>
+            <button
+              type="button"
+              className={`role-option ${role === 'tutor' ? 'active' : ''}`}
+              onClick={() => setRole('tutor')}
+              aria-pressed={role === 'tutor'}
+            >
+              Tutor
+            </button>
+          </div>
           
           {error && <div className="error-message" style={{ display: 'block' }}>{error}</div>}
           {success && <div className="success-message" style={{ display: 'block' }}>{success}</div>}
@@ -113,6 +136,19 @@ function Signup() {
                 placeholder="Enter your email"
               />
             </div>
+
+            {role === 'student' && (
+              <div className="form-group">
+                <label htmlFor="school">School or University</label>
+                <input
+                  type="text"
+                  id="school"
+                  value={school}
+                  onChange={(e) => setSchool(e.target.value)}
+                  placeholder="Enter your school or university"
+                />
+              </div>
+            )}
 
             <div className="form-group">
               <label htmlFor="password">Password</label>
