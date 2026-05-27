@@ -11,7 +11,7 @@ function Home() {
       <div className="home-page">
         <div className="hero" style={{ backgroundImage: `url(${heroImage})` }}>
           <div className="hero-content">
-            <h1>Having trouble learning something or want to spread knowledge?</h1>
+            <h1>Having trouble learning something?</h1>
             <p>We got you.</p>
             <div className="cta-buttons">
               <Link to="/signup?role=student" className="btn btn-primary">Book a tutor now</Link>
