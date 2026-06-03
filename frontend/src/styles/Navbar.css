@@ -44,9 +44,9 @@ nav {
 }
 
 .logout-btn {
-    background-color: #e74c3c;
-    color: white;
-    border: none;
+    background-color: white;
+    color: #111111;
+    border: 1px solid white;
     padding: 0.5rem 1rem;
     border-radius: 4px;
     cursor: pointer;
@@ -54,5 +54,5 @@ nav {
 }
 
 .logout-btn:hover {
-    background-color: #c0392b;
+    background-color: #f2f2f2;
 }

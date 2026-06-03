@@ -2,26 +2,21 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import '../styles/pages/Home.css';
+import heroImage from '../assets/images/frontpageHeroImage.jpg';
 
 function Home() {
-  const user = JSON.parse(localStorage.getItem('user'));
-
   return (
     <>
       <Navbar />
-      <div className="container">
-        <div className="hero">
-          <h1>Welcome to TutorConnect</h1>
-          <p>Connect with experienced tutors and accelerate your learning journey</p>
-          <div className="cta-buttons">
-            {user ? (
-              <Link to="/profile" className="btn btn-primary">Go to Profile</Link>
-            ) : (
-              <>
-                <Link to="/login" className="btn btn-primary">Get Started</Link>
-                <a href="#features" className="btn btn-secondary">Learn More</a>
-              </>
-            )}
+      <div className="home-page">
+        <div className="hero" style={{ backgroundImage: `url(${heroImage})` }}>
+          <div className="hero-content">
+            <h1>Having trouble learning something?</h1>
+            <p>We got you.</p>
+            <div className="cta-buttons">
+              <Link to="/signup?role=student" className="btn btn-primary">Book a tutor now</Link>
+              <Link to="/signup?role=tutor" className="btn btn-secondary">Become a tutor now</Link>
+            </div>
           </div>
         </div>
 
