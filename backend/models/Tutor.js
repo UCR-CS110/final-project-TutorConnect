@@ -25,6 +25,10 @@ const TutorSchema = new mongoose.Schema(
             type: Number,
             default: 0
         },
+        numRatings: {
+            type: Number,
+            default: 0
+        },
         relatedWork: {
             type: String,
             default: '',
