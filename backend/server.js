@@ -31,8 +31,11 @@ app.use(session({
 }));
 
 // Routes
-// Auth routes found in routes/auth
+// Auth routes found in routes/auth.js
 app.use('/api/auth', require('./routes/auth'));
+
+// Tutor routes found in routes/tutor.js
+app.use('/api/tutor', require('./routes/tutor'));
 
 // Test route
 app.get('/', (req, res) => {
