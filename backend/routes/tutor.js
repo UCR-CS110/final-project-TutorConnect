@@ -53,47 +53,36 @@ output: The tutor's info in the form of a JSON. ex:
 router.get('/info/:id', requireAuth, tutorController.getInfo);
 
 /*
-updateBio: PUT request ('/api/tutor/bio')
-function: Updates the bio for the current user if and only if the user is a tutor.
-input: JSON body with bio. ex:
-    {
-        "bio": "I am a tutor"
-    }
-output: If successful, returns (message: 'Tutor bio updated successfully') and the tutor object in the form of a JSON.
-        If not successful, returns error 500. (error: 'Tutor bio update failed').
-*/
-router.put('/bio', requireAuth, requireTutor, tutorController.updateBio);
-
-/*
 getReviews: GET request ('/api/tutor/get-reviews/:id')
 function: Returns all of the reviews that the specified tutor has received.
 input: Tutor id through the URL
-output: An array of review objects in the form of a JSON.
+output: An array of review objects ("reviews") in the form of a JSON as well as the average rating ("ratingAverage").
 */
 router.get('/get-reviews/:id', requireAuth, tutorController.getReviews);
 
 /*
-updateCost: PUT request ('/api/tutor/cost')
-function: Updates the cost for the current user if and only if the user is a tutor
-input: JSON body with cost. ex:
+updateSubjects: PUT request ('/api/tutor/')
+function: Updates the tutor information for a user if and only if the current user is a tutor.
+input: JSON body with any modification. The valid fields to be modified are "bio", "subjects", "cost", "relatedWork". ex:
     {
+        "subjects": ["Math", "Science"]
+    }
+    or
+    {
+        "bio": "I am a tutor",
         "cost": 50
     }
-output: If successful, returns (message: 'Tutor cost updated successfully') and the tutor object in the form of a JSON.
-        If not successful, returns error 500. (error: 'Tutor cost update failed').
+    etc.
+output: If successful, returns (message: 'Tutor subjects updated successfully') and the tutor object in the form of a JSON.
+        If not successful, returns error 500. (error: 'Tutor subjects update failed').
 */
-router.put('/cost', requireAuth, requireTutor, tutorController.updateCost);
+router.put('/', requireAuth, requireTutor, tutorController.update);
 
 /*
-updateRelatedWork: PUT request ('/api/tutor/related-work')
-function: Updates the related work for the current user if and only if the user is a tutor
-input: JSON body with related work. ex:
-    {
-        "relatedWork": "I teach in a school"
-    }
-output: If successful, returns (message: 'Tutor related work updated successfully') and the tutor object in the form of a JSON.
-        If not successful, returns error 500. (error: 'Tutor related work update failed').
+get: GET request ('/api/tutor/')
+function: Returns the current user (indicated by the session) as a tutor. This does not 
+          work if the user is not registered as a tutor.
 */
-router.put('/related-work', requireAuth, requireTutor, tutorController.updateRelatedWork);
+router.get('/', requireAuth, requireTutor, tutorController.get);
 
 module.exports = router;

@@ -6,19 +6,20 @@ const reviewController = require('../controllers/reviewController');
 
 /*
 register: POST request ('/api/review/')
-function: Creates a new review and links it with the user being reviewed and the student who wrote the review
-input:
-output:
+function: Creates a new review and links it with the tutor being reviewed and the current 
+          student (based on the session id). Updates the average rating of the tutor and adds the 
+          review to the list of reviews on the tutor object.
+input: JSON body with review information. ex:
+    {
+        "tutor": "5f6b6b6b6b6b6b6b6b6b6b6b",
+        "subject": "Math",
+        "rating": 5,
+        "comment": "I really enjoyed your tutoring experience!"
+    }
+output: If successful, returns (message: 'Review created successfully') and the review object in the form of a JSON.
+        If not successful, returns error 500. (error: 'Review creation failed').
 */
 router.post('/', reviewController.create);
-
-/*
-register: GET request ('/api/review/reviews-received')
-function: Get all of the reviews that a specified user has received
-input:
-output:
-*/
-router.get('/reviews-received/:userId', reviewController.reviewsReceived);
 
 /*
 register: GET request ('/api/review/reviews-issued')
@@ -30,7 +31,7 @@ router.get('/reviews-issued/:userId', reviewController.reviewsIssued);
 
 /*
 register: DELETE request ('/api/review/:id')
-function: Delete a review
+function: Delete a review based on the review id
 input:
 output:
 */
