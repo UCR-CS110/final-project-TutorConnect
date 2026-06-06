@@ -54,6 +54,7 @@ exports.getInfo = async (req, res) => {
 
         // return the information about the tutor
         res.status(200).json({
+            userid: tutor.user,
             bio: tutor.bio,
             subjects: tutor.subjects,
             cost: tutor.cost,
@@ -97,5 +98,33 @@ exports.getReviews = async (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Review retrieval failed', details: error.message });
+    }
+}
+
+exports.updateCost = async (req, res) => {
+    console.log('req.tutor:', req.tutor);
+    console.log('req.body:', req.body);
+    try {
+        // modify the tutor's cost and save it to the database
+        req.tutor.cost = req.body.cost;
+        await req.tutor.save();
+        
+        res.status(200).json({ message: 'Tutor cost updated successfully', tutor: req.tutor });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Tutor cost update failed', details: error.message });
+    }
+}
+
+exports.updateRelatedWork = async (req, res) => {
+    try {
+        // modify the tutor's related work and save it to the database
+        req.tutor.relatedWork = req.body.relatedWork;
+        await req.tutor.save();
+        
+        res.status(200).json({ message: 'Tutor related work updated successfully', tutor: req.tutor });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Tutor related work update failed', details: error.message });
     }
 }
