@@ -82,6 +82,8 @@ router.put('/', requireAuth, requireTutor, tutorController.update);
 get: GET request ('/api/tutor/')
 function: Returns the current user (indicated by the session) as a tutor. This does not 
           work if the user is not registered as a tutor.
+input: nothing
+output: The tutor object in the form of a JSON.
 */
 router.get('/', requireAuth, requireTutor, tutorController.get);
 
