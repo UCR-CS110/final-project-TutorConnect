@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const reviewController = require('../controllers/reviewController');
 const requireAuth = require('../middleware/auth');
-const requireTutor = require('../middleware/requireTutor');
 
 // Review routes ('/api/review/...')
 
