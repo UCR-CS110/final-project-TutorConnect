@@ -1,3 +1,4 @@
+const User = require('../models/User');
 const Tutor = require('../models/Tutor');
 const Review = require('../models/Review');
 
@@ -19,6 +20,11 @@ exports.register = async (req, res) => {
             cost: cost,
             relatedWork: relatedWork
         });
+
+        // change the user's role to tutor
+        const user = await User.findOne({ _id: req.session.userId });
+        user.role = 'tutor';
+        await user.save();
         
         res.status(201).json({
             message: 'Tutor registered successfully',
