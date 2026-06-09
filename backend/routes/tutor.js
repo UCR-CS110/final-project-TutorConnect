@@ -38,8 +38,7 @@ router.delete('/', requireAuth, requireTutor, tutorController.delete);
 /*
 getInfo: GET request ('/api/tutor/info/:id')
 function: Returns the information for the specified tutor.
-input: The id of the user who is the tutor that you want to get info for. Tutor is just an extension of user
-       so you'll need the user id, not the tutor id. This id should be supplied in the URL
+input: The tutor id through the URL
 output: The tutor's info in the form of a JSON. ex:
     {
         "bio": "I am a tutor",
@@ -86,5 +85,13 @@ input: nothing
 output: The tutor object in the form of a JSON.
 */
 router.get('/', requireAuth, requireTutor, tutorController.get);
+
+/*
+getAllTutors: GET request ('/api/tutor/tutors')
+function: Returns all of the tutors in the database.
+input: nothing
+output: An array of tutor objects ("tutors") in the form of a JSON.
+*/
+router.get('/tutors', tutorController.getAllTutors);
 
 module.exports = router;

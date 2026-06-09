@@ -1,5 +1,3 @@
-const bcrypt = require('bcryptjs');
-const User = require('../models/User');
 const Tutor = require('../models/Tutor');
 const Review = require('../models/Review');
 
@@ -8,7 +6,7 @@ exports.create = async (req, res) => {
         const { tutorId, subject, rating, comment } = req.body;
 
         // make sure the tutor exists
-        const tutor = await Tutor.findOne({ user: tutorId });
+        const tutor = await Tutor.findOne({ _id: tutorId });
         if (!tutor) {
             return res.status(404).json({ error: 'Tutor not found' });
         }
@@ -65,7 +63,7 @@ exports.delete = async (req, res) => {
         }
 
         // update the tutor info if the tutor still exists
-        const tutor = await Tutor.findOne({ user: review.tutor });
+        const tutor = await Tutor.findOne({ _id: review.tutor });
         if (tutor) {
             if (tutor.numRatings == 1) {
                 tutor.ratingAverage = 0;
@@ -100,7 +98,7 @@ exports.update = async (req, res) => {
 
         if (req.body.rating != undefined) {
             // update the average rating for the tutor
-            const tutor = await Tutor.findOne({ user: review.tutor });
+            const tutor = await Tutor.findOne({ _id: review.tutor });
             if (tutor) {
                 tutor.ratingAverage = (tutor.ratingAverage * tutor.numRatings - review.rating + req.body.rating) / tutor.numRatings;
                 await tutor.save();
@@ -129,9 +127,7 @@ exports.getReview = async (req, res) => {
     try {
         const review = await Review.findOne({ _id: req.params.id });
 
-        res.status(200).json({
-            review: review
-        });
+        res.status(200).json(review);
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Review retrieval failed', details: error.message });

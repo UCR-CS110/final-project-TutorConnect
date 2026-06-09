@@ -1,5 +1,3 @@
-const bcrypt = require('bcryptjs');
-const User = require('../models/User');
 const Tutor = require('../models/Tutor');
 const Review = require('../models/Review');
 
@@ -47,21 +45,13 @@ exports.delete = async (req, res) => {
 exports.getInfo = async (req, res) => {
     try {
         // check that the tutor exists
-        const tutor = await Tutor.findOne({ user: req.params.id });
+        const tutor = await Tutor.findOne({ _id: req.params.id });
         if (!tutor) {
             return res.status(404).json({ error: 'Tutor not found' });
         }
 
         // return the information about the tutor
-        res.status(200).json({
-            userid: tutor.user,
-            bio: tutor.bio,
-            subjects: tutor.subjects,
-            cost: tutor.cost,
-            ratingAverage: tutor.ratingAverage,
-            numRatings: tutor.numRatings,
-            relatedWork: tutor.relatedWork
-        })
+        res.status(200).json(tutor);
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Tutor info retrieval failed', details: error.message });
@@ -71,7 +61,7 @@ exports.getInfo = async (req, res) => {
 exports.getReviews = async (req, res) => {
     try {
         // check that the tutor exists
-        const tutor = await Tutor.findOne({ user: req.params.id });
+        const tutor = await Tutor.findOne({ _id: req.params.id });
         if (!tutor) {
             return res.status(404).json({ error: 'Tutor not found' });
         }
@@ -121,6 +111,19 @@ exports.update = async (req, res) => {
 exports.get = async (req, res) => {
     try {
         res.status(200).json(req.tutor);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Tutor retrieval failed', details: error.message });
+    }
+}
+
+exports.getAllTutors = async (req, res) => {
+    try {
+        const tutors = await Tutor.find();
+
+        res.status(200).json({
+            tutors: tutors
+        });
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Tutor retrieval failed', details: error.message });
