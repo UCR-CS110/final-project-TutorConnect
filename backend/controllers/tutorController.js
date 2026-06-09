@@ -1,6 +1,7 @@
 const User = require('../models/User');
 const Tutor = require('../models/Tutor');
 const Review = require('../models/Review');
+const Availability = require('../models/Availability');
 
 exports.register = async (req, res) => {
     try {
@@ -12,11 +13,14 @@ exports.register = async (req, res) => {
             return res.status(400).json({ error: 'User is already registered as a tutor' });
         }
 
+        // make the subjects lowercase
+        const lowercaseSubjects = subjects.map(subject => subject.toLowerCase());
+
         // create the tutor in the database
         const newTutor = await Tutor.create({
             user: req.session.userId,
             bio: bio,
-            subjects: subjects,
+            subjects: lowercaseSubjects,
             cost: cost,
             relatedWork: relatedWork
         });
@@ -38,8 +42,20 @@ exports.register = async (req, res) => {
 
 exports.delete = async (req, res) => {
     try {
+        // change the user's role to student
+        const user = await User.findOne({ _id: req.session.userId });
+        user.role = 'student';
+        await user.save();
+
+        // delete reviews on the tutor
+        const tutor = await Tutor.findOne({ user: req.session.userId });
+        await Review.deleteMany({ tutor: tutor._id });
+
+        // delete the availability of the tutor
+        await Availability.deleteMany({ tutor: tutor._id });
+
         // delete the tutor from the database
-        await Tutor.deleteOne({ user: req.session.userId });
+        await tutor.deleteOne();
 
         res.status(200).json({ message: 'Tutor deleted successfully' });
     } catch (error) {
@@ -93,7 +109,7 @@ exports.update = async (req, res) => {
         }
 
         if (req.body.subjects != undefined) {
-            req.tutor.subjects = req.body.subjects;
+            req.tutor.subjects = req.body.subjects.map(subject => subject.toLowerCase());
             await req.tutor.save();
         }
 
@@ -126,6 +142,19 @@ exports.get = async (req, res) => {
 exports.getAllTutors = async (req, res) => {
     try {
         const tutors = await Tutor.find();
+
+        res.status(200).json({
+            tutors: tutors
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Tutor retrieval failed', details: error.message });
+    }
+}
+
+exports.getTutorsBySubject = async (req, res) => {
+    try {
+        const tutors = await Tutor.find({ subjects: req.params.subject.toLowerCase() });
 
         res.status(200).json({
             tutors: tutors
