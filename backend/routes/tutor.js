@@ -27,7 +27,8 @@ router.post('/register', requireAuth, tutorController.register);
 delete: DELETE request ('/api/tutor/')
 function: Deletes the current user (indicated by the session) as a tutor. This does not 
           work if the user is not registered as a tutor. This does not delete the user from the database.
-          It just removes the tutor object from the database.
+          It removes the tutor object from the database as well as any reviews left on the tutor and the 
+          availability set by the tutor.
 input: nothing
 output: If successful, returns (message: 'Tutor deleted successfully').
         If not successful, returns error 500 (error: 'Tutor deletion failed').
@@ -93,5 +94,13 @@ input: nothing
 output: An array of tutor objects ("tutors") in the form of a JSON.
 */
 router.get('/tutors', requireAuth, tutorController.getAllTutors);
+
+/*
+getTutorsBySubject: GET request ('/api/tutor/tutors-by-subject/:subject')
+function: Returns all of the tutors that teach the specified subject.
+input: The subject through the URL
+output: An array of tutor objects ("tutors") in the form of a JSON.
+*/
+router.get('/tutors-by-subject/:subject', requireAuth, tutorController.getTutorsBySubject);
 
 module.exports = router;
