@@ -37,8 +37,11 @@ app.use('/api/auth', require('./routes/auth'));
 // Tutor routes found in routes/tutor.js
 app.use('/api/tutor', require('./routes/tutor'));
 
-// Tutor routes found in routes/review.js
+// Review routes found in routes/review.js
 app.use('/api/review', require('./routes/review'));
+
+// Availability routes found in routes/availability.js
+app.use('/api/availability', require('./routes/availability'));
 
 // Test route
 app.get('/', (req, res) => {
