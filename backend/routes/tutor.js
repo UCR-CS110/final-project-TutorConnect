@@ -92,6 +92,6 @@ function: Returns all of the tutors in the database.
 input: nothing
 output: An array of tutor objects ("tutors") in the form of a JSON.
 */
-router.get('/tutors', tutorController.getAllTutors);
+router.get('/tutors', requireAuth, tutorController.getAllTutors);
 
 module.exports = router;
