@@ -2,6 +2,7 @@ const User = require('../models/User');
 const Tutor = require('../models/Tutor');
 const Review = require('../models/Review');
 const Availability = require('../models/Availability');
+const Appointment = require('../models/Appointment');
 
 exports.register = async (req, res) => {
     try {
@@ -162,5 +163,27 @@ exports.getTutorsBySubject = async (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Tutor retrieval failed', details: error.message });
+    }
+}
+
+exports.getAppointments = async (req, res) => {
+    try {
+        // if the user is a tutor, find all of the appointments they're going to tutor
+        const tutor = await Tutor.findOne({ user: req.session.userId });
+        let tutoring = [];
+        if (tutor) {
+            tutoring = await Appointment.find({ tutor: tutor._id });
+        }
+
+        // if the user is either a student or a tutor, find all of the appointments they're going to
+        const appointments = await Appointment.find({ student: req.session.userId });
+
+        res.status(200).json({
+            tutoring: tutoring,
+            appointments: appointments
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Appointment retrieval failed', details: error.message });
     }
 }

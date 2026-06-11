@@ -43,6 +43,12 @@ app.use('/api/review', require('./routes/review'));
 // Availability routes found in routes/availability.js
 app.use('/api/availability', require('./routes/availability'));
 
+// Appointment routes found in routes/appointment.js
+app.use('/api/appointment', require('./routes/appointment'));
+
+// User routes found in routes/user.js
+app.use('/api/user', require('./routes/user'));
+
 // Test route
 app.get('/', (req, res) => {
   res.json({

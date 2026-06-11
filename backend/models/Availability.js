@@ -8,10 +8,10 @@ const AvailabilitySchema = new mongoose.Schema(
             ref: 'Tutor',
             required: true
         },
-        day: {
-            type: String,
+        date: {
+            type: Date,
             required: true,
-            trim: true
+            default: Date.now
         },
         startTime: {
             type: String,

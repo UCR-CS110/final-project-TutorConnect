@@ -8,13 +8,15 @@ const requireAuth = require('../middleware/auth');
 /*
 create: POST request ('/api/appointment/')
 function: Creates a new appointment with the specified info.
-input: JSON body with appointment information. ex:
+input: JSON body with appointment information. All fields are mandatory except for date which will default to
+       two weeks from now. The date must be in the format YYYY-MM-DD. Location can only be "online" or "in-person". ex:
     {
         "tutorId": "5f6b6b6b6b6b6b6b6b6b6b6b",
-        "day": "Monday",
+        "date": "2026-12-30",
         "startTime": "10:00am",
         "endTime": "12:00pm",
-        "location": "online"
+        "location": "online",
+        "subject": "Math"
     }
 output: a JSON of the appointment object that was just created.
 */
@@ -42,8 +44,8 @@ router.delete('/:id', requireAuth, appointmentController.delete);
 update: PUT request ('/api/appointment/:id')
 function: Edits the information of an appointment. Only works if the current user is either 
           the student or the tutor of the appointment.
-input: The id of the appointment in the URL as well as a JSON on the new appointment. Only the day, start time,
-       end time, and meeting type can be modified. Input validation is not done. Ex:
+input: The id of the appointment in the URL as well as a JSON on the new appointment. Only the date, start time,
+       end time, location, and subject can be modified. Input validation is not done. Ex:
     {
         "startTime": "10:30am",
         "endTime": "12:30pm",
@@ -51,7 +53,7 @@ input: The id of the appointment in the URL as well as a JSON on the new appoint
     }
         or
     {
-        "day": "Monday"
+        "date": "2027-12-30"
     }
 output: If successful, returns (message: 'Appointment updated successfully') and the appointment object in the form of a JSON.
         If not successful, returns error 500. (error: 'Appointment update failed').
