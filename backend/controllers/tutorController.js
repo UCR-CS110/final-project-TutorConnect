@@ -190,6 +190,12 @@ exports.getAppointments = async (req, res) => {
 
 exports.getAvailability = async (req, res) => {
     try {
+        // check that the tutor exists
+        const tutor = await Tutor.findOne({ _id: req.params.id });
+        if (!tutor) {
+            return res.status(404).json({ error: 'Tutor not found' });
+        }
+        
         const availability = await Availability.find({ tutor: req.params.id });
 
         res.status(200).json({
