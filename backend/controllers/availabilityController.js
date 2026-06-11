@@ -3,21 +3,41 @@ const Tutor = require('../models/Tutor');
 
 exports.create = async (req, res) => {
     try {
-        const { day, startTime, endTime, meetingType } = req.body;
+        const { date, startTime, endTime, meetingType } = req.body;
 
         // check that all necessary fields are there
-        if (!day || !startTime || !endTime) {
+        if (!date || !startTime || !endTime) {
             return res.status(400).json({ error: 'Missing required fields' });
         }
 
+        // check that the meetingType is one of the valid options
         if (!['online', 'in-person', 'both'].includes(meetingType)) {
             return res.status(400).json({ error: 'Invalid meeting type' });
+        }
+
+        // check that the date is in YYYY-MM-DD format
+        const formatRegex = /^\d{4}-\d{2}-\d{2}$/;
+        if (!formatRegex.test(req.body.date)) {
+            return res.status(400).json({ error: 'Date must be in YYYY-MM-DD format' });
+        }
+
+        // check that it's a valid date (e.g. not 2026-13-45)
+        const tempDate = new Date(req.body.date);
+        if (isNaN(tempDate.getTime())) {
+            return res.status(400).json({ error: 'Invalid date' });
+        }
+
+        // check that the date is today or in the future
+        const today = new Date();
+        today.setHours(0, 0, 0, 0); // strip time so we compare dates only
+        if (date < today) {
+            return res.status(400).json({ error: 'Date must be today or in the future' });
         }
 
         // create the Availability in the database
         const newAvailability = await Availability.create({
             tutor: req.tutor._id,
-            day: day,
+            date: date,
             startTime: startTime,
             endTime: endTime,
             meetingType: meetingType
@@ -60,15 +80,34 @@ exports.delete = async (req, res) => {
 
 exports.update = async (req, res) => {
     try {
-        const { day, startTime, endTime, meetingType } = req.body;
+        const { date, startTime, endTime, meetingType } = req.body;
 
         const availability = await Availability.findOne({ _id: req.params.id });
         if (!availability) {
             return res.status(404).json({ error: 'Availability not found' });
         }
 
-        if (day) {
-            availability.day = day;
+        if (date) {
+            // check that the date is in YYYY-MM-DD format
+            const formatRegex = /^\d{4}-\d{2}-\d{2}$/;
+            if (!formatRegex.test(req.body.date)) {
+                return res.status(400).json({ error: 'Date must be in YYYY-MM-DD format' });
+            }
+
+            // check that it's a valid date (e.g. not 2026-13-45)
+            const tempDate = new Date(req.body.date);
+            if (isNaN(tempDate.getTime())) {
+                return res.status(400).json({ error: 'Invalid date' });
+            }
+
+            // check that the date is today or in the future
+            const today = new Date();
+            today.setHours(0, 0, 0, 0); // strip time so we compare dates only
+            if (date < today) {
+                return res.status(400).json({ error: 'Date must be today or in the future' });
+            }
+            
+            availability.date = date;
         }
 
         if (startTime) {

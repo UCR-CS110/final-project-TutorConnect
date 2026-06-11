@@ -12,7 +12,7 @@ function: Creates a new availability with the specified info. Only works if the 
 input: JSON body with availability information. "meetingType" can only be one of "online", "in-person", or "both". 
        Only the meetingType is optional. ex:
     {
-        "day": "Monday",
+        "date": "Monday",
         "startTime": "10:00am",
         "endTime": "12:00pm",
         "meetingType": "in-person"
