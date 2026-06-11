@@ -113,4 +113,20 @@ output: A JSON of arrays of appointments. "tutoring" contains all of the appoint
 */
 router.get('/appointments', requireAuth, tutorController.getAppointments);
 
+/*
+getAvailability: GET request ('/api/tutor/availability/:id')
+function: Returns the availability of specified tutor.
+input: the tutor id through the URL
+output: An array of availability objects ("availability") in the form of a JSON.
+*/
+router.get('/availability/:id', requireAuth, tutorController.getAvailability);
+
+/*
+getAppointments: GET request ('/api/tutor/appointments/:id')
+function: Returns the list of appointments the specified tutor has.
+input: the tutor id through the URL
+output: A JSON of arrays of appointments.
+*/
+router.get('/appointments/:id', requireAuth, tutorController.getAppointments);
+
 module.exports = router;

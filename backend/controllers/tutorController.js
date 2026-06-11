@@ -187,3 +187,36 @@ exports.getAppointments = async (req, res) => {
         res.status(500).json({ error: 'Appointment retrieval failed', details: error.message });
     }
 }
+
+exports.getAvailability = async (req, res) => {
+    try {
+        const availability = await Availability.find({ tutor: req.params.id });
+
+        res.status(200).json({
+            availability: availability
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Availability retrieval failed', details: error.message });
+    }
+}
+
+exports.getAppointments = async (req, res) => {
+    try {
+        // check that the tutor exists
+        const tutor = await Tutor.findOne({ _id: req.params.id });
+        if (!tutor) {
+            return res.status(404).json({ error: 'Tutor not found' });
+        }
+
+        // get all of the appointments for the tutor
+        const appointments = await Appointment.find({ tutor: req.params.id });
+
+        res.status(200).json({
+            appointments: appointments
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Appointment retrieval failed', details: error.message });
+    }
+}
