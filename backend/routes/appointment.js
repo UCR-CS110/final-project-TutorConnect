@@ -45,7 +45,8 @@ update: PUT request ('/api/appointment/:id')
 function: Edits the information of an appointment. Only works if the current user is either 
           the student or the tutor of the appointment.
 input: The id of the appointment in the URL as well as a JSON on the new appointment. Only the date, start time,
-       end time, location, and subject can be modified. Input validation is not done. Ex:
+       end time, location, subject, and confirmed can be modified. Confirmed can only be true or false (no quotes).
+       Input validation is done only on the date and confirmed. Ex:
     {
         "startTime": "10:30am",
         "endTime": "12:30pm",
@@ -54,6 +55,11 @@ input: The id of the appointment in the URL as well as a JSON on the new appoint
         or
     {
         "date": "2027-12-30"
+    }
+
+        or
+    {
+        "confirmed": true
     }
 output: If successful, returns (message: 'Appointment updated successfully') and the appointment object in the form of a JSON.
         If not successful, returns error 500. (error: 'Appointment update failed').

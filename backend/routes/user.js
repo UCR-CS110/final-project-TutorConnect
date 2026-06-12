@@ -29,7 +29,7 @@ output: A JSON of arrays of appointments. "tutoring" contains all of the appoint
         that the current user is going to tutor, and "appointments" contains all of the 
         appointments that the current user is going to.
 */
-router.get('/appointments', requireAuth, tutorController.getAppointments);
+router.get('/appointments', requireAuth, tutorController.getMyAppointments);
 
 /*
 getStudents: GET request ('/api/user/students')
