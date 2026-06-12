@@ -230,7 +230,7 @@ function Profile() {
             </div>
             <div className="profile-rating" aria-label={`Rating ${ratingDisplay}`}>
               <span className="rating-star">★</span>
-              <span>{ratingDisplay}</span>
+              <span>{ratingDisplay === 'NA' ? 'No ratings yet' : ratingDisplay}</span>
             </div>
             <p>{user.email}</p>
             <div className="profile-stat">
@@ -442,7 +442,12 @@ function AppointmentsSection({ title, appointments, emptyText, onCancel, formatD
     <div className="section">
       <h2>{title}</h2>
       <div className="list-grid">
-        {appointments.length === 0 && <p className="section-note">{emptyText}</p>}
+        {appointments.length === 0 && (
+          <div className="empty-state">
+            <h3>No sessions yet</h3>
+            <p>{emptyText}</p>
+          </div>
+        )}
         {appointments.map((appointment) => (
           <div className="list-card" key={appointment._id}>
             <strong>{formatSubject(appointment.subject)}</strong>
