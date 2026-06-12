@@ -14,10 +14,21 @@ nav {
     color: white;
     font-size: 1.5rem;
     font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.navbar-logo {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+    filter: brightness(0) invert(1);
 }
 
 .navbar-links {
     display: flex;
+    align-items: center;
     gap: 2rem;
     list-style: none;
 }
@@ -45,19 +56,58 @@ nav {
     gap: 1rem;
 }
 
-.search-nav-btn {
-    background-color: #f28c28;
-    color: white;
-    border: none;
-    padding: 0.5rem 1rem;
-    border-radius: 4px;
-    text-decoration: none;
-    font-weight: 600;
-    transition: background-color 0.3s;
+.nav-search-form {
+    width: 190px;
+    min-height: 36px;
+    background-color: #20232b;
+    border: 2px solid #3b404c;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0 0.75rem;
+    transition: border-color 0.2s;
 }
 
-.search-nav-btn:hover {
-    background-color: #d96f00;
+.nav-search-form:focus-within {
+    border-color: #4b5261;
+}
+
+.nav-search-icon {
+    width: 15px;
+    height: 15px;
+    border: 2px solid #d7dbe3;
+    border-radius: 50%;
+    position: relative;
+    flex: 0 0 auto;
+}
+
+.nav-search-icon::after {
+    content: "";
+    width: 9px;
+    height: 2px;
+    background-color: #d7dbe3;
+    border-radius: 999px;
+    position: absolute;
+    right: -7px;
+    bottom: -4px;
+    transform: rotate(45deg);
+}
+
+.nav-search-form input {
+    width: 100%;
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 0.95rem;
+}
+
+.nav-search-form input::placeholder {
+    color: #f2f2f2;
+}
+
+.nav-search-form input:focus {
+    outline: none;
 }
 
 .logout-btn {
@@ -83,6 +133,13 @@ nav {
 
     .navbar-links {
         padding-left: 0;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .nav-search-form {
+        width: min(320px, 80vw);
     }
 
 }

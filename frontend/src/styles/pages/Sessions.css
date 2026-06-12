@@ -1,0 +1,113 @@
+body {
+    background-color: #f5f5f5;
+}
+
+.sessions-page {
+    max-width: 1100px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+.sessions-shell {
+    background: white;
+    border-radius: 8px;
+    padding: 2rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.sessions-shell h1 {
+    color: #2c3e50;
+    margin-bottom: 1.5rem;
+    border-bottom: 2px solid #667eea;
+    padding-bottom: 0.5rem;
+}
+
+.sessions-note {
+    color: #7f8c8d;
+}
+
+.session-list {
+    display: grid;
+    gap: 1rem;
+}
+
+.session-card {
+    display: grid;
+    grid-template-columns: minmax(180px, 1.2fr) repeat(3, minmax(120px, 0.8fr)) auto;
+    gap: 1rem;
+    align-items: center;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+.session-card h2 {
+    color: #2c3e50;
+    font-size: 1.2rem;
+    margin-bottom: 0.25rem;
+}
+
+.session-card p,
+.session-detail span {
+    color: #7f8c8d;
+}
+
+.session-detail {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.session-detail strong {
+    color: #2c3e50;
+}
+
+.session-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+.sessions-error {
+    color: white;
+    background-color: #e74c3c;
+    padding: 1rem;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+}
+
+.btn {
+    padding: 0.7rem 1rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 0.95rem;
+    display: inline-block;
+}
+
+.btn-primary {
+    background-color: #2c3e50;
+    color: white;
+}
+
+.btn-secondary {
+    background-color: #f28c28;
+    color: white;
+}
+
+.btn-danger {
+    background-color: #e74c3c;
+    color: white;
+}
+
+@media (max-width: 900px) {
+    .session-card {
+        grid-template-columns: 1fr;
+    }
+
+    .session-actions {
+        justify-content: flex-start;
+    }
+}

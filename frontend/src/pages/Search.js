@@ -15,7 +15,6 @@ function Search() {
   const [priceSort, setPriceSort] = useState(searchParams.get('sort') || '');
   const [results, setResults] = useState([]);
   const [bookingForms, setBookingForms] = useState({});
-  const [reviewForms, setReviewForms] = useState({});
   const [status, setStatus] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -165,42 +164,6 @@ function Search() {
     }
   };
 
-  const updateReviewForm = (tutorId, field, value) => {
-    setReviewForms((forms) => ({
-      ...forms,
-      [tutorId]: {
-        subject: '',
-        rating: '5',
-        comment: '',
-        ...(forms[tutorId] || {}),
-        [field]: value
-      }
-    }));
-  };
-
-  const submitReview = async (e, tutorId) => {
-    e.preventDefault();
-    const review = reviewForms[tutorId] || {};
-
-    try {
-      await request('/review/', {
-        method: 'POST',
-        body: JSON.stringify({
-          tutorId,
-          subject: review.subject,
-          rating: Number(review.rating),
-          comment: review.comment
-        })
-      });
-      setReviewForms((forms) => ({ ...forms, [tutorId]: undefined }));
-      setStatus('Review submitted.');
-      setError('');
-    } catch (reviewError) {
-      setError(reviewError.message);
-      setStatus('');
-    }
-  };
-
   if (!user) {
     return <div>Loading...</div>;
   }
@@ -263,11 +226,8 @@ function Search() {
                 key={result._id}
                 tutor={result}
                 booking={bookingForms[result._id] || {}}
-                review={reviewForms[result._id] || {}}
                 onBookingChange={updateBookingForm}
                 onBook={bookTutor}
-                onReviewChange={updateReviewForm}
-                onReview={submitReview}
                 onMessage={() => navigate(`/messages?with=${result.user}`)}
               />
             ))}
@@ -278,7 +238,7 @@ function Search() {
   );
 }
 
-function TutorResult({ tutor, booking, review, onBookingChange, onBook, onReviewChange, onReview, onMessage }) {
+function TutorResult({ tutor, booking, onBookingChange, onBook, onMessage }) {
   return (
     <div className="search-name-card">
       <div className="name-card-header">
@@ -321,21 +281,6 @@ function TutorResult({ tutor, booking, review, onBookingChange, onBook, onReview
         <button className="btn btn-primary" type="submit">Book</button>
       </form>
 
-      <form className="search-mini-form" onSubmit={(e) => onReview(e, tutor._id)}>
-        <h3>Leave Review</h3>
-        <div className="search-form-row">
-          <input value={review.subject || ''} onChange={(e) => onReviewChange(tutor._id, 'subject', e.target.value)} placeholder="Subject" required />
-          <select value={review.rating || '5'} onChange={(e) => onReviewChange(tutor._id, 'rating', e.target.value)}>
-            <option value="5">5 stars</option>
-            <option value="4">4 stars</option>
-            <option value="3">3 stars</option>
-            <option value="2">2 stars</option>
-            <option value="1">1 star</option>
-          </select>
-        </div>
-        <textarea value={review.comment || ''} onChange={(e) => onReviewChange(tutor._id, 'comment', e.target.value)} placeholder="How did it go?" />
-        <button className="btn btn-secondary" type="submit">Submit Review</button>
-      </form>
     </div>
   );
 }

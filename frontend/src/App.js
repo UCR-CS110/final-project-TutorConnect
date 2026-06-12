@@ -7,6 +7,8 @@ import Profile from './pages/Profile';
 import Search from './pages/Search';
 import Messages from './pages/Messages';
 import TutorProfile from './pages/TutorProfile';
+import EditAccount from './pages/EditAccount';
+import Sessions from './pages/Sessions';
 
 function App() {
   return (
@@ -19,6 +21,8 @@ function App() {
         <Route path="/search" element={<Search />} />
         <Route path="/messages" element={<Messages />} />
         <Route path="/tutors/:id" element={<TutorProfile />} />
+        <Route path="/edit-account" element={<EditAccount />} />
+        <Route path="/sessions" element={<Sessions />} />
       </Routes>
     </Router>
   );
