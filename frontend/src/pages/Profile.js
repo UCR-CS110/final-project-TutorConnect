@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import '../styles/pages/Profile.css';
 
@@ -7,7 +7,6 @@ const API_URL = 'http://localhost:5001/api';
 
 function Profile() {
   const [user, setUser] = useState(null);
-  const [accountForm, setAccountForm] = useState({ username: '', email: '', school: '' });
   const [tutorProfile, setTutorProfile] = useState(null);
   const [tutorForm, setTutorForm] = useState({ bio: '', subjects: '', cost: '', relatedWork: '' });
   const [availabilityForm, setAvailabilityForm] = useState({ date: '', startTime: '', endTime: '', meetingType: 'online' });
@@ -55,12 +54,6 @@ function Profile() {
       const freshUser = await request('/auth/me');
       localStorage.setItem('user', JSON.stringify(freshUser));
       setUser(freshUser);
-      setAccountForm({
-        username: freshUser.username || '',
-        email: freshUser.email || '',
-        school: freshUser.school || ''
-      });
-
       const appointmentData = await request('/user/appointments');
       setAppointments(appointmentData);
 
@@ -103,11 +96,6 @@ function Profile() {
     }
 
     setUser(storedUser);
-    setAccountForm({
-      username: storedUser.username || '',
-      email: storedUser.email || '',
-      school: storedUser.school || ''
-    });
     loadDashboard();
   }, [loadDashboard, navigate]);
 
@@ -119,21 +107,6 @@ function Profile() {
   const showError = (message) => {
     setError(message);
     setStatus('');
-  };
-
-  const saveAccount = async (e) => {
-    e.preventDefault();
-    try {
-      const data = await request('/user/', {
-        method: 'PUT',
-        body: JSON.stringify(accountForm)
-      });
-      localStorage.setItem('user', JSON.stringify(data.user));
-      setUser(data.user);
-      showSuccess('Account information saved.');
-    } catch (saveError) {
-      showError(saveError.message);
-    }
   };
 
   const saveTutorProfile = async (e) => {
@@ -275,38 +248,7 @@ function Profile() {
             )}
           </div>
 
-          <form className="dashboard-form compact-form" onSubmit={saveAccount}>
-            <div className="form-row">
-              <div className="form-group">
-                <label htmlFor="account-username">Username</label>
-                <input
-                  id="account-username"
-                  value={accountForm.username}
-                  onChange={(e) => setAccountForm({ ...accountForm, username: e.target.value })}
-                />
-              </div>
-              <div className="form-group">
-                <label htmlFor="account-email">Email</label>
-                <input
-                  id="account-email"
-                  type="email"
-                  value={accountForm.email}
-                  onChange={(e) => setAccountForm({ ...accountForm, email: e.target.value })}
-                />
-              </div>
-              {!isTutor && (
-                <div className="form-group">
-                  <label htmlFor="account-school">School or University</label>
-                  <input
-                    id="account-school"
-                    value={accountForm.school}
-                    onChange={(e) => setAccountForm({ ...accountForm, school: e.target.value })}
-                  />
-                </div>
-              )}
-            </div>
-            <button className="btn btn-primary" type="submit">Save Account</button>
-          </form>
+          <Link className="btn btn-primary edit-account-link" to="/edit-account">Edit Account</Link>
         </div>
 
         {isTutor ? (

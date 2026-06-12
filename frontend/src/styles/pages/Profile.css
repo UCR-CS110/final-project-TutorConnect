@@ -158,6 +158,10 @@ body {
     flex-wrap: wrap;
 }
 
+.edit-account-link {
+    margin-top: 1.5rem;
+}
+
 .section-note {
     color: #7f8c8d;
     margin-bottom: 1rem;
