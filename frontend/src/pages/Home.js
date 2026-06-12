@@ -11,7 +11,7 @@ function Home() {
       <div className="home-page">
         <div className="hero" style={{ backgroundImage: `url(${heroImage})` }}>
           <div className="hero-content">
-            <h1>Having trouble learning something?</h1>
+            <h1>Having trouble learning?</h1>
             <p>We got you.</p>
             <div className="cta-buttons">
               <Link to="/search" className="btn btn-primary">Book a tutor now</Link>
@@ -32,6 +32,31 @@ function Home() {
           <div className="feature-card">
             <h3>Track Progress</h3>
             <p>Monitor your learning progress with detailed reviews</p>
+          </div>
+        </div>
+        <div className="how-it-works">
+          <div className="section-heading">
+            <h2>How TutorConnect Works</h2>
+            <p>Find support, schedule sessions, and keep track of your learning progress.</p>
+          </div>
+          <div className="steps">
+            <div className="step-card">
+              <span className="step-number">1</span>
+              <h3>Search for a tutor</h3>
+              <p>Browse tutors by subject and find someone who matches what you need help with.</p>
+            </div>
+
+            <div className="step-card">
+              <span className="step-number">2</span>
+              <h3>Book a session</h3>
+              <p>Choose a time and session type that works for your schedule.</p>
+            </div>
+
+            <div className="step-card">
+              <span className="step-number">3</span>
+              <h3>Review your experience</h3>
+              <p>Leave ratings and comments to help other students find reliable tutors.</p>
+            </div>
           </div>
         </div>
       </div>
