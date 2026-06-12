@@ -149,6 +149,18 @@ function Messages() {
     loadData();
   }, [loadData]);
 
+  useEffect(() => {
+    const partnerId = searchParams.get('with');
+
+    if (!partnerId) return undefined;
+
+    const intervalId = setInterval(() => {
+      loadConversation(partnerId);
+    }, 3000);
+
+    return () => clearInterval(intervalId);
+  }, [loadConversation, searchParams]);
+
   const selectConversation = (partnerId) => {
     setSearchParams({ with: partnerId });
     loadConversation(partnerId);
