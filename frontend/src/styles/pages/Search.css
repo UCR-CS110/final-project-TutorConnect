@@ -1,0 +1,246 @@
+body {
+    background-color: #f5f5f5;
+}
+
+.search-page {
+    max-width: 1100px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+.search-shell {
+    background: white;
+    border-radius: 8px;
+    padding: 2rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.search-shell h1 {
+    color: #2c3e50;
+    margin-bottom: 1.5rem;
+}
+
+.search-page-form {
+    display: grid;
+    gap: 1rem;
+}
+
+.search-mode {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+}
+
+.search-mode button {
+    padding: 0.75rem;
+    border: 1px solid #bdc3c7;
+    border-radius: 4px;
+    background: white;
+    color: #2c3e50;
+    cursor: pointer;
+    font-weight: 700;
+}
+
+.search-mode button.active {
+    background-color: #2c3e50;
+    border-color: #2c3e50;
+    color: white;
+}
+
+.search-main-row,
+.search-filter-row,
+.search-form-row {
+    display: grid;
+    gap: 1rem;
+}
+
+.search-main-row {
+    grid-template-columns: minmax(220px, 1fr) auto;
+}
+
+.search-filter-row,
+.search-form-row {
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+}
+
+.search-page-form input,
+.search-page-form select,
+.search-mini-form input,
+.search-mini-form select,
+.search-mini-form textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #bdc3c7;
+    border-radius: 4px;
+    font-size: 1rem;
+    font-family: inherit;
+}
+
+.search-mini-form textarea {
+    min-height: 90px;
+    resize: vertical;
+}
+
+.search-page-form input:focus,
+.search-page-form select:focus,
+.search-mini-form input:focus,
+.search-mini-form select:focus,
+.search-mini-form textarea:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.search-dropdown-results {
+    display: grid;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.search-name-card {
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    padding: 1rem;
+    display: grid;
+    gap: 1rem;
+}
+
+.search-name-card.compact {
+    gap: 0.5rem;
+}
+
+.name-card-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    align-items: flex-start;
+}
+
+.name-card-header h2 {
+    color: #2c3e50;
+    font-size: 1.25rem;
+    margin-bottom: 0.25rem;
+}
+
+.tutor-name-link {
+    color: #2c3e50;
+    text-decoration: none;
+}
+
+.tutor-name-link:hover {
+    text-decoration: underline;
+}
+
+.name-card-header p,
+.search-name-card p,
+.search-card-meta span,
+.search-note {
+    color: #7f8c8d;
+}
+
+.search-role-badge {
+    padding: 0.35rem 0.75rem;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+
+.search-role-badge.student {
+    background-color: #eaf2ff;
+    color: #285f9f;
+}
+
+.search-role-badge.tutor {
+    background-color: #fff0df;
+    color: #c45a00;
+}
+
+.search-subject-list {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.search-subject-list span {
+    background-color: #eaf2ff;
+    color: #285f9f;
+    padding: 0.35rem 0.6rem;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.search-card-meta {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.search-mini-form {
+    display: grid;
+    gap: 0.75rem;
+    padding-top: 1rem;
+    border-top: 1px solid #ecf0f1;
+}
+
+.search-mini-form h3 {
+    color: #2c3e50;
+    font-size: 1rem;
+}
+
+.search-success,
+.search-error {
+    color: white;
+    padding: 1rem;
+    border-radius: 4px;
+    margin-top: 1rem;
+}
+
+.search-success {
+    background-color: #27ae60;
+}
+
+.search-error {
+    background-color: #e74c3c;
+}
+
+.btn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.3s;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-primary {
+    background-color: #2c3e50;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #34495e;
+}
+
+.btn-secondary {
+    background-color: #f28c28;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background-color: #d96f00;
+}
+
+@media (max-width: 700px) {
+    .search-main-row {
+        grid-template-columns: 1fr;
+    }
+
+    .name-card-header,
+    .search-card-meta {
+        flex-direction: column;
+    }
+}

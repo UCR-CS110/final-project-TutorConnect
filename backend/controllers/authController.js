@@ -47,7 +47,9 @@ exports.register = async (req, res) => {
                 username: newUser.username,
                 email: newUser.email,
                 role: newUser.role || 'student',
-                school: newUser.school || ''
+                school: newUser.school || '',
+                ratingAverage: newUser.ratingAverage || 0,
+                numRatings: newUser.numRatings || 0
             }
         });
     } catch (error) {
@@ -90,7 +92,9 @@ exports.login = async (req, res) => {
                 username: user.username,
                 email: user.email,
                 role: user.role || 'student',
-                school: user.school || ''
+                school: user.school || '',
+                ratingAverage: user.ratingAverage || 0,
+                numRatings: user.numRatings || 0
             }
         });
     } catch (error) {
@@ -145,7 +149,9 @@ exports.me = async (req, res) => {
       username: user.username,
       email: user.email,
       role: user.role || 'student',
-      school: user.school || ''
+      school: user.school || '',
+      ratingAverage: user.ratingAverage || 0,
+      numRatings: user.numRatings || 0
     });
   } catch (error) {
     console.error(error);

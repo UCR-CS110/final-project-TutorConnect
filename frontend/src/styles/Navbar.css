@@ -6,6 +6,8 @@ nav {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    position: relative;
+    z-index: 10;
 }
 
 .navbar-brand {
@@ -43,6 +45,21 @@ nav {
     gap: 1rem;
 }
 
+.search-nav-btn {
+    background-color: #f28c28;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: background-color 0.3s;
+}
+
+.search-nav-btn:hover {
+    background-color: #d96f00;
+}
+
 .logout-btn {
     background-color: white;
     color: #111111;
@@ -55,4 +72,17 @@ nav {
 
 .logout-btn:hover {
     background-color: #f2f2f2;
+}
+
+@media (max-width: 760px) {
+    nav,
+    .user-info {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .navbar-links {
+        padding-left: 0;
+    }
+
 }

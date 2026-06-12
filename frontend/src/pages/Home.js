@@ -14,7 +14,7 @@ function Home() {
             <h1>Having trouble learning something?</h1>
             <p>We got you.</p>
             <div className="cta-buttons">
-              <Link to="/signup?role=student" className="btn btn-primary">Book a tutor now</Link>
+              <Link to="/search" className="btn btn-primary">Book a tutor now</Link>
               <Link to="/signup?role=tutor" className="btn btn-secondary">Become a tutor now</Link>
             </div>
           </div>

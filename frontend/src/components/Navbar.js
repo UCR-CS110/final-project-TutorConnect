@@ -28,9 +28,15 @@ function Navbar() {
         <li><Link to="/">Home</Link></li>
         {!user && <li><Link to="/login">Login</Link></li>}
         {user && <li><Link to="/profile">Profile</Link></li>}
+        {user && <li><Link to="/messages">Messages</Link></li>}
       </ul>
       {user && (
         <div className="user-info">
+          {user.role === 'student' && (
+            <Link className="search-nav-btn" to="/search">
+              Search
+            </Link>
+          )}
           <span>{user.username}</span>
           <button className="logout-btn" onClick={handleLogout}>Logout</button>
         </div>

@@ -32,6 +32,14 @@ output: A JSON of arrays of appointments. "tutoring" contains all of the appoint
 router.get('/appointments', requireAuth, tutorController.getAppointments);
 
 /*
+getStudents: GET request ('/api/user/students')
+function: Returns student profiles. Optional query parameter "search" filters by username, email, or school.
+input: Optional query string, ex: /api/user/students?search=ucd
+output: A JSON object with a "students" array.
+*/
+router.get('/students', requireAuth, userController.getStudents);
+
+/*
 get: GET request ('/api/user/:id')
 function: Returns the user with the specified id.
 input: The user id through the URL

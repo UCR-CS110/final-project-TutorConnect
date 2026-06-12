@@ -28,6 +28,14 @@ const UserSchema = new mongoose.Schema(
       type: String,
       trim: true,
       default: ''
+    },
+    ratingAverage: {
+      type: Number,
+      default: 0
+    },
+    numRatings: {
+      type: Number,
+      default: 0
     }
   },
   {

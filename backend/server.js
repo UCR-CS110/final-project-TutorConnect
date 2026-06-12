@@ -49,6 +49,12 @@ app.use('/api/appointment', require('./routes/appointment'));
 // User routes found in routes/user.js
 app.use('/api/user', require('./routes/user'));
 
+// Message routes found in routes/message.js
+app.use('/api/message', require('./routes/message'));
+
+// Student review routes found in routes/studentReview.js
+app.use('/api/student-review', require('./routes/studentReview'));
+
 // Test route
 app.get('/', (req, res) => {
   res.json({
