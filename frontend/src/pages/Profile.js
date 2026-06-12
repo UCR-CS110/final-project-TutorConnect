@@ -81,7 +81,8 @@ function Profile() {
         localStorage.removeItem('user');
         navigate('/login');
       } else {
-        setError(loadError.message);
+        console.error('Profile load error:', loadError);
+        setError('');
       }
     } finally {
       setLoading(false);
