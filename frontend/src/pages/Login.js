@@ -74,7 +74,7 @@ function Login() {
           <h2>Login to TutorConnect</h2>
           
           {error && <div className="error-message" style={{ display: 'block' }}>{error}</div>}
-          {success && <div className="success-message" style={{ display: 'block' }}>{success}</div>}
+          {success && <div className="auth-success-message" style={{ display: 'block' }}>{success}</div>}
 
           <form onSubmit={handleLogin}>
             <div className="form-group">

@@ -1,10 +1,13 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import Navbar from '../components/Navbar';
+import { formatSubject, SUBJECT_OPTIONS } from '../constants/subjects';
+import { getDateInputValue, getDateTimeValidationError } from '../utils/appointments';
 import '../styles/pages/Search.css';
 
 const API_URL = 'http://localhost:5001/api';
-const SUBJECT_FILTERS = ['Math', 'English', 'Science', 'History', 'Foreign Languages', 'Humanities'];
+
+const getTutorSubjectOptions = (tutor) => [...new Set((tutor.subjects || []).map(formatSubject).filter(Boolean))];
 
 function Search() {
   const navigate = useNavigate();
@@ -146,6 +149,18 @@ function Search() {
     e.preventDefault();
     const booking = bookingForms[tutorId] || {};
     const payload = { tutorId, ...booking };
+    const defaultDate = new Date();
+    defaultDate.setDate(defaultDate.getDate() + 14);
+    const dateTimeError = getDateTimeValidationError({
+      ...booking,
+      date: booking.date || getDateInputValue(defaultDate)
+    }, 'Booking');
+    if (dateTimeError) {
+      setError(dateTimeError);
+      setStatus('');
+      return;
+    }
+
     if (!payload.date) {
       delete payload.date;
     }
@@ -203,7 +218,7 @@ function Search() {
             <div className="search-filter-row">
               <select value={subjectFilter} onChange={(e) => setSubjectFilter(e.target.value)}>
                 <option value="">All subjects</option>
-                {SUBJECT_FILTERS.map((subject) => (
+                {SUBJECT_OPTIONS.map((subject) => (
                   <option key={subject} value={subject}>{subject}</option>
                 ))}
               </select>
@@ -239,6 +254,8 @@ function Search() {
 }
 
 function TutorResult({ tutor, booking, onBookingChange, onBook, onMessage }) {
+  const tutorSubjectOptions = getTutorSubjectOptions(tutor);
+
   return (
     <div className="search-name-card">
       <div className="name-card-header">
@@ -255,19 +272,22 @@ function TutorResult({ tutor, booking, onBookingChange, onBook, onMessage }) {
       <p>{tutor.bio || 'No bio yet.'}</p>
       <div className="search-subject-list">
         {(tutor.subjects || []).map((subject) => (
-          <span key={subject}>{subject}</span>
+          <span key={subject}>{formatSubject(subject)}</span>
         ))}
       </div>
       <div className="search-card-meta">
         <strong>${tutor.cost || 0}/hr</strong>
-        <span>{Number(tutor.ratingAverage || 0).toFixed(1)} stars ({tutor.numRatings || 0})</span>
+        <span className="search-rating">
+          <span className="search-rating-star">★</span>
+          {tutor.numRatings > 0 ? Number(tutor.ratingAverage || 0).toFixed(1) : 'NA'} ({tutor.numRatings || 0})
+        </span>
       </div>
       <button className="btn btn-secondary" type="button" onClick={onMessage}>Message Tutor</button>
 
       <form className="search-mini-form" onSubmit={(e) => onBook(e, tutor._id)}>
         <h3>Book Session</h3>
         <div className="search-form-row">
-          <input type="date" value={booking.date || ''} onChange={(e) => onBookingChange(tutor._id, 'date', e.target.value)} />
+          <input type="date" min={getDateInputValue()} value={booking.date || ''} onChange={(e) => onBookingChange(tutor._id, 'date', e.target.value)} />
           <input type="time" value={booking.startTime || ''} onChange={(e) => onBookingChange(tutor._id, 'startTime', e.target.value)} required />
           <input type="time" value={booking.endTime || ''} onChange={(e) => onBookingChange(tutor._id, 'endTime', e.target.value)} required />
         </div>
@@ -276,7 +296,12 @@ function TutorResult({ tutor, booking, onBookingChange, onBook, onMessage }) {
             <option value="online">Online</option>
             <option value="in-person">In person</option>
           </select>
-          <input value={booking.subject || ''} onChange={(e) => onBookingChange(tutor._id, 'subject', e.target.value)} placeholder="Subject" required />
+          <select value={booking.subject || ''} onChange={(e) => onBookingChange(tutor._id, 'subject', e.target.value)} required>
+            <option value="">Subject</option>
+            {tutorSubjectOptions.map((subject) => (
+              <option key={subject} value={subject}>{subject}</option>
+            ))}
+          </select>
         </div>
         <button className="btn btn-primary" type="submit">Book</button>
       </form>

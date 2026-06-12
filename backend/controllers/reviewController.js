@@ -1,5 +1,30 @@
 const Tutor = require('../models/Tutor');
 const Review = require('../models/Review');
+const Appointment = require('../models/Appointment');
+
+const getAppointmentEndDateTime = (appointment) => {
+    const dateText = appointment.date instanceof Date
+        ? appointment.date.toISOString()
+        : String(appointment.date || '');
+    const dateMatch = dateText.match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if (!dateMatch) return null;
+
+    const [hours, minutes] = String(appointment.endTime || '').split(':').map(Number);
+    if ([hours, minutes].some(Number.isNaN)) return null;
+
+    return new Date(
+        Number(dateMatch[1]),
+        Number(dateMatch[2]) - 1,
+        Number(dateMatch[3]),
+        hours,
+        minutes
+    );
+};
+
+const isCompletedAppointment = (appointment) => {
+    const endDateTime = getAppointmentEndDateTime(appointment);
+    return endDateTime && endDateTime.getTime() <= Date.now();
+};
 
 exports.create = async (req, res) => {
     try {
@@ -9,6 +34,16 @@ exports.create = async (req, res) => {
         const tutor = await Tutor.findOne({ _id: tutorId });
         if (!tutor) {
             return res.status(404).json({ error: 'Tutor not found' });
+        }
+
+        const appointments = await Appointment.find({
+            tutor: tutorId,
+            student: req.session.userId,
+            confirmed: true
+        });
+
+        if (!appointments.some(isCompletedAppointment)) {
+            return res.status(403).json({ error: 'You can only review a tutor after a confirmed session has passed' });
         }
 
         // create the review in the database

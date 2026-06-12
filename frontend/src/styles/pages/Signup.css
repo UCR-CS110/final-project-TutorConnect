@@ -121,11 +121,9 @@ body {
     margin-bottom: 1rem;
 }
 
-.success-message {
-    background-color: #27ae60;
-    color: white;
-    padding: 1rem;
-    border-radius: 4px;
+.auth-success-message {
+    color: #27ae60;
+    font-weight: 600;
     margin-bottom: 1rem;
 }
 

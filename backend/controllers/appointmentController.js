@@ -1,9 +1,83 @@
 const Appointment = require('../models/Appointment');
 const Tutor = require('../models/Tutor');
+const Availability = require('../models/Availability');
+
+const isValidDateString = (date) => /^\d{4}-\d{2}-\d{2}$/.test(date);
+
+const getLocalDateTime = (date, time) => {
+    if (!isValidDateString(date) || !time) return null;
+
+    const [year, month, day] = date.split('-').map(Number);
+    const [hours, minutes] = String(time).split(':').map(Number);
+
+    if ([year, month, day, hours, minutes].some(Number.isNaN)) return null;
+
+    const dateTime = new Date(year, month - 1, day, hours, minutes);
+    if (
+        dateTime.getFullYear() !== year ||
+        dateTime.getMonth() !== month - 1 ||
+        dateTime.getDate() !== day ||
+        dateTime.getHours() !== hours ||
+        dateTime.getMinutes() !== minutes
+    ) {
+        return null;
+    }
+
+    return dateTime;
+};
+
+const getMinutesFromTime = (time) => {
+    const [hours, minutes] = String(time || '').split(':').map(Number);
+    if ([hours, minutes].some(Number.isNaN)) return null;
+    return (hours * 60) + minutes;
+};
+
+const getDefaultAppointmentDate = () => {
+    const twoWeeks = new Date();
+    twoWeeks.setDate(twoWeeks.getDate() + 14);
+    return twoWeeks.toISOString().slice(0, 10);
+};
+
+const getStoredDateValue = (date) => {
+    if (!date) return '';
+
+    if (date instanceof Date) {
+        return date.toISOString().slice(0, 10);
+    }
+
+    return String(date).slice(0, 10);
+};
+
+const validateAppointmentDateTime = (date, startTime, endTime) => {
+    if (!isValidDateString(date)) {
+        return 'Date must be in YYYY-MM-DD format';
+    }
+
+    const startDateTime = getLocalDateTime(date, startTime);
+    if (!startDateTime) {
+        return 'Invalid date or start time';
+    }
+
+    const endMinutes = getMinutesFromTime(endTime);
+    const startMinutes = getMinutesFromTime(startTime);
+    if (endMinutes === null) {
+        return 'Invalid end time';
+    }
+
+    if (endMinutes <= startMinutes) {
+        return 'End time must be after start time';
+    }
+
+    if (startDateTime.getTime() <= Date.now()) {
+        return 'Booking must be for a future date and time. Please choose another date.';
+    }
+
+    return null;
+};
 
 exports.create = async (req, res) => {
     try {
-        const { tutorId, date, startTime, endTime, location, subject } = req.body;
+        const { tutorId, date, startTime, endTime, location, subject, availabilityId } = req.body;
 
         // make sure the tutor exists
         const tutor = await Tutor.findOne({ _id: tutorId });
@@ -17,40 +91,57 @@ exports.create = async (req, res) => {
         }
 
         const lowercaseSubject = subject.toLowerCase();
+        const appointmentDate = date || getDefaultAppointmentDate();
 
-        if (date) {
-            // check that the date is in YYYY-MM-DD format
-            const formatRegex = /^\d{4}-\d{2}-\d{2}$/;
-            if (!formatRegex.test(req.body.date)) {
-                return res.status(400).json({ error: 'Date must be in YYYY-MM-DD format' });
-            }
-
-            // check that it's a valid date (e.g. not 2026-13-45)
-            const tempDate = new Date(req.body.date);
-            if (isNaN(tempDate.getTime())) {
-                return res.status(400).json({ error: 'Invalid date' });
-            }
-
-            // check that the date is today or in the future
-            const today = new Date();
-            today.setHours(0, 0, 0, 0); // strip time so we compare dates only
-            if (date < today) {
-                return res.status(400).json({ error: 'Date must be today or in the future' });
-            }
+        const dateTimeError = validateAppointmentDateTime(appointmentDate, startTime, endTime);
+        if (dateTimeError) {
+            return res.status(400).json({ error: dateTimeError });
         }
 
         if (location !== 'online' && location !== 'in-person') {
             return res.status(400).json({ error: 'Location must be online or in-person' });
         }
 
+        const existingAppointment = await Appointment.findOne({
+            tutor: tutorId,
+            startTime: startTime,
+            endTime: endTime
+        });
+
+        if (existingAppointment && getStoredDateValue(existingAppointment.date) === appointmentDate) {
+            return res.status(400).json({ error: 'This time slot is already booked. Please choose another time.' });
+        }
+
+        let confirmed = false;
+        if (availabilityId) {
+            const availability = await Availability.findOne({ _id: availabilityId, tutor: tutorId });
+            if (!availability) {
+                return res.status(404).json({ error: 'Availability slot not found' });
+            }
+
+            const availabilityDate = getStoredDateValue(availability.date);
+            const availabilityMatchesBooking = availabilityDate === appointmentDate
+                && availability.startTime === startTime
+                && availability.endTime === endTime
+                && (availability.meetingType === 'both' || availability.meetingType === location);
+
+            if (!availabilityMatchesBooking) {
+                return res.status(400).json({ error: 'Availability slot does not match this booking' });
+            }
+
+            confirmed = true;
+        }
+
         const newAppointment = await Appointment.create({
             tutor: tutorId,
             student: req.session.userId,
-            date: date,
+            date: appointmentDate,
             startTime: startTime,
             endTime: endTime,
             location: location,
-            subject: lowercaseSubject
+            subject: lowercaseSubject,
+            confirmed: confirmed,
+            availability: availabilityId || undefined
         });
 
         res.status(201).json({
@@ -134,27 +225,18 @@ exports.update = async (req, res) => {
             return res.status(403).json({ error: 'Forbidden' });
         }
 
+        const nextDate = req.body.date != undefined
+            ? req.body.date
+            : appointment.date.toISOString().slice(0, 10);
+        const nextStartTime = req.body.startTime != undefined ? req.body.startTime : appointment.startTime;
+        const nextEndTime = req.body.endTime != undefined ? req.body.endTime : appointment.endTime;
+        const dateTimeError = validateAppointmentDateTime(nextDate, nextStartTime, nextEndTime);
+        if (dateTimeError) {
+            return res.status(400).json({ error: dateTimeError });
+        }
+
         // update the appointment
         if (req.body.date != undefined) {
-            // check that the date is in YYYY-MM-DD format
-            const formatRegex = /^\d{4}-\d{2}-\d{2}$/;
-            if (!formatRegex.test(req.body.date)) {
-                return res.status(400).json({ error: 'Date must be in YYYY-MM-DD format' });
-            }
-
-            // check that it's a valid date (e.g. not 2026-13-45)
-            const date = new Date(req.body.date);
-            if (isNaN(date.getTime())) {
-                return res.status(400).json({ error: 'Invalid date' });
-            }
-
-            // check that the date is today or in the future
-            const today = new Date();
-            today.setHours(0, 0, 0, 0); // strip time so we compare dates only
-            if (date < today) {
-                return res.status(400).json({ error: 'Date must be today or in the future' });
-            }
-
             appointment.date = req.body.date;
         }
 
@@ -178,6 +260,10 @@ exports.update = async (req, res) => {
         }
 
         if (req.body.confirmed != undefined) {
+            if (!isTutor) {
+                return res.status(403).json({ error: 'Only the tutor can confirm appointments' });
+            }
+
             if (req.body.confirmed !== true && req.body.confirmed !== false) {
                 return res.status(400).json({ error: 'Confirmed must be true or false' });
             }
