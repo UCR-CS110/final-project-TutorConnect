@@ -42,6 +42,10 @@ const AppointmentSchema = new mongoose.Schema(
             type: String,
             required: true,
             trim: true
+        },
+        confirmed: {
+            type: Boolean,
+            default: false
         }
     },
     {

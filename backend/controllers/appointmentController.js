@@ -88,7 +88,15 @@ exports.delete = async (req, res) => {
 
         // make sure the appointment belongs to the current user (either student or tutor)
         const isStudent = appointment.student.toString() === req.session.userId;
-        const isTutor = req.tutor && req.tutor._id.toString() === appointment.tutor.toString();
+
+        let isTutor = false;
+        const tutor = await Tutor.findOne({ _id: appointment.tutor });
+        if (tutor) {
+            if (tutor.user.toString() === req.session.userId) {
+                isTutor = true;
+            }
+        }
+
         if (!isStudent && !isTutor) {
             return res.status(403).json({ error: 'Forbidden' });
         }
@@ -113,7 +121,15 @@ exports.update = async (req, res) => {
 
         // make sure the appointment belongs to the current user (either student or tutor)
         const isStudent = appointment.student.toString() === req.session.userId;
-        const isTutor = req.tutor && req.tutor._id.toString() === appointment.tutor.toString();
+
+        let isTutor = false;
+        const tutor = await Tutor.findOne({ _id: appointment.tutor });
+        if (tutor) {
+            if (tutor.user.toString() === req.session.userId) {
+                isTutor = true;
+            }
+        }
+
         if (!isStudent && !isTutor) {
             return res.status(403).json({ error: 'Forbidden' });
         }
@@ -159,6 +175,13 @@ exports.update = async (req, res) => {
 
         if (req.body.subject != undefined) {
             appointment.subject = req.body.subject;
+        }
+
+        if (req.body.confirmed != undefined) {
+            if (req.body.confirmed !== true && req.body.confirmed !== false) {
+                return res.status(400).json({ error: 'Confirmed must be true or false' });
+            }
+            appointment.confirmed = req.body.confirmed;
         }
 
         await appointment.save();

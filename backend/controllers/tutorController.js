@@ -166,7 +166,7 @@ exports.getTutorsBySubject = async (req, res) => {
     }
 }
 
-exports.getAppointments = async (req, res) => {
+exports.getMyAppointments = async (req, res) => {
     try {
         // if the user is a tutor, find all of the appointments they're going to tutor
         const tutor = await Tutor.findOne({ user: req.session.userId });
