@@ -7,12 +7,12 @@ Frontend: React. Backend: NodeJS + Express. Database: MongoDB.
 
 ## How to run/deploy
 
-1. To run the project navigate through CD to the backend directory
-2. Run "npm install" and then "npm run dev" in terminal
-3. In another terminal, navigate to the frontend directory
-4. Run "npm install" then "npm run start" in terminal
-
-note: for developers make sure you have right env file
+1. To run the project, clone the repository using the github link.
+2. Find the file backend/.env.dev and rename the file to .env.
+3. Navigate through CD to the backend directory.
+4. Run "npm install" and then "npm run dev" in terminal.
+5. In another terminal, navigate to the frontend directory.
+6. Run "npm install" then "npm run start" in terminal. The webpage should automatically open up in your web browser.
 
 ## Main Features
 
