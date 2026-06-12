@@ -33,7 +33,7 @@ const AppointmentSchema = new mongoose.Schema(
             required: true,
             trim: true
         },
-        meetingType: {
+        location: {
             type: String,
             enum: ['online', 'in-person'],
             default: 'online'

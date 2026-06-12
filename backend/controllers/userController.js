@@ -26,7 +26,18 @@ exports.update = async (req, res) => {
             await user.save();
         }
 
-        res.status(200).json({ message: 'User updated successfully', user: req.user });
+        res.status(200).json({
+            message: 'User updated successfully',
+            user: {
+                id: user._id,
+                username: user.username,
+                email: user.email,
+                role: user.role || 'student',
+                school: user.school || '',
+                ratingAverage: user.ratingAverage || 0,
+                numRatings: user.numRatings || 0
+            }
+        });
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'User update failed', details: error.message });
@@ -36,7 +47,7 @@ exports.update = async (req, res) => {
 exports.getUser = async (req, res) => {
     try {
         // see if the user exists
-        const user = await User.findOne({ _id: req.params.id });
+        const user = await User.findOne({ _id: req.params.id }).select('username email role school ratingAverage numRatings');
         if (!user) {
             return res.status(404).json({ error: 'User not found' });
         }
@@ -45,5 +56,29 @@ exports.getUser = async (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'User retrieval failed', details: error.message });
+    }
+}
+
+exports.getStudents = async (req, res) => {
+    try {
+        const search = req.query.search || '';
+        const query = {
+            role: 'student'
+        };
+
+        if (search.trim()) {
+            query.$or = [
+                { username: { $regex: search.trim(), $options: 'i' } },
+                { email: { $regex: search.trim(), $options: 'i' } },
+                { school: { $regex: search.trim(), $options: 'i' } }
+            ];
+        }
+
+        const students = await User.find(query).select('username email role school ratingAverage numRatings');
+
+        res.status(200).json({ students: students });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Student search failed', details: error.message });
     }
 }
