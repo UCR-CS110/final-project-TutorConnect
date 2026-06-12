@@ -143,7 +143,7 @@ function TutorProfile() {
           </div>
           <h3>Related Work</h3>
           <p>{tutor.relatedWork || 'No related work listed.'}</p>
-          <button className="btn btn-secondary" type="button" onClick={() => navigate(`/messages?with=${tutor.user}`)}>
+          <button className="btn btn-secondary message-tutor-btn" type="button" onClick={() => navigate(`/messages?with=${tutor.user}`)}>
             Message Tutor
           </button>
         </section>

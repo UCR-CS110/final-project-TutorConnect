@@ -158,6 +158,10 @@ body {
     color: white;
 }
 
+.message-tutor-btn {
+    margin-top: 1rem;
+}
+
 @media (max-width: 700px) {
     .tutor-profile-header {
         flex-direction: column;
