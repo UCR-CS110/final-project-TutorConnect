@@ -1,6 +1,71 @@
 const Availability = require('../models/Availability');
 const Tutor = require('../models/Tutor');
 
+const isValidDateString = (date) => /^\d{4}-\d{2}-\d{2}$/.test(date);
+
+const getLocalDateTime = (date, time) => {
+    if (!isValidDateString(date) || !time) return null;
+
+    const [year, month, day] = date.split('-').map(Number);
+    const [hours, minutes] = String(time).split(':').map(Number);
+
+    if ([year, month, day, hours, minutes].some(Number.isNaN)) return null;
+
+    const dateTime = new Date(year, month - 1, day, hours, minutes);
+    if (
+        dateTime.getFullYear() !== year ||
+        dateTime.getMonth() !== month - 1 ||
+        dateTime.getDate() !== day ||
+        dateTime.getHours() !== hours ||
+        dateTime.getMinutes() !== minutes
+    ) {
+        return null;
+    }
+
+    return dateTime;
+};
+
+const getMinutesFromTime = (time) => {
+    const [hours, minutes] = String(time || '').split(':').map(Number);
+    if ([hours, minutes].some(Number.isNaN)) return null;
+    return (hours * 60) + minutes;
+};
+
+const validateAvailabilityDateTime = (date, startTime, endTime) => {
+    if (!isValidDateString(date)) {
+        return 'Date must be in YYYY-MM-DD format';
+    }
+
+    const startDateTime = getLocalDateTime(date, startTime);
+    if (!startDateTime) {
+        return 'Invalid date or start time';
+    }
+
+    const endMinutes = getMinutesFromTime(endTime);
+    const startMinutes = getMinutesFromTime(startTime);
+    if (endMinutes === null) {
+        return 'Invalid end time';
+    }
+
+    if (endMinutes <= startMinutes) {
+        return 'End time must be after start time';
+    }
+
+    if (startDateTime.getTime() <= Date.now()) {
+        return 'Availability must be for a future date and time. Please choose another date.';
+    }
+
+    return null;
+};
+
+const getAvailabilityEndDateTime = (availability) => {
+    const dateText = availability.date instanceof Date
+        ? availability.date.toISOString()
+        : String(availability.date || '');
+    const date = dateText.slice(0, 10);
+    return getLocalDateTime(date, availability.endTime);
+};
+
 exports.create = async (req, res) => {
     try {
         const { date, startTime, endTime, meetingType } = req.body;
@@ -15,23 +80,9 @@ exports.create = async (req, res) => {
             return res.status(400).json({ error: 'Invalid meeting type' });
         }
 
-        // check that the date is in YYYY-MM-DD format
-        const formatRegex = /^\d{4}-\d{2}-\d{2}$/;
-        if (!formatRegex.test(req.body.date)) {
-            return res.status(400).json({ error: 'Date must be in YYYY-MM-DD format' });
-        }
-
-        // check that it's a valid date (e.g. not 2026-13-45)
-        const tempDate = new Date(req.body.date);
-        if (isNaN(tempDate.getTime())) {
-            return res.status(400).json({ error: 'Invalid date' });
-        }
-
-        // check that the date is today or in the future
-        const today = new Date();
-        today.setHours(0, 0, 0, 0); // strip time so we compare dates only
-        if (date < today) {
-            return res.status(400).json({ error: 'Date must be today or in the future' });
+        const dateTimeError = validateAvailabilityDateTime(date, startTime, endTime);
+        if (dateTimeError) {
+            return res.status(400).json({ error: dateTimeError });
         }
 
         // create the Availability in the database
@@ -58,7 +109,10 @@ exports.getAll = async (req, res) => {
         const availabilities = await Availability.find({ tutor: req.tutor._id });
 
         res.status(200).json({
-            availabilities: availabilities
+            availabilities: availabilities.filter((availability) => {
+                const endDateTime = getAvailabilityEndDateTime(availability);
+                return !endDateTime || endDateTime.getTime() > Date.now();
+            })
         });
     } catch (error) {
         console.error(error);
@@ -88,25 +142,6 @@ exports.update = async (req, res) => {
         }
 
         if (date) {
-            // check that the date is in YYYY-MM-DD format
-            const formatRegex = /^\d{4}-\d{2}-\d{2}$/;
-            if (!formatRegex.test(req.body.date)) {
-                return res.status(400).json({ error: 'Date must be in YYYY-MM-DD format' });
-            }
-
-            // check that it's a valid date (e.g. not 2026-13-45)
-            const tempDate = new Date(req.body.date);
-            if (isNaN(tempDate.getTime())) {
-                return res.status(400).json({ error: 'Invalid date' });
-            }
-
-            // check that the date is today or in the future
-            const today = new Date();
-            today.setHours(0, 0, 0, 0); // strip time so we compare dates only
-            if (date < today) {
-                return res.status(400).json({ error: 'Date must be today or in the future' });
-            }
-            
             availability.date = date;
         }
 
@@ -123,6 +158,14 @@ exports.update = async (req, res) => {
                 return res.status(400).json({ error: 'Invalid meeting type' });
             }
             availability.meetingType = meetingType;
+        }
+
+        const nextDate = date || availability.date.toISOString().slice(0, 10);
+        const nextStartTime = startTime || availability.startTime;
+        const nextEndTime = endTime || availability.endTime;
+        const dateTimeError = validateAvailabilityDateTime(nextDate, nextStartTime, nextEndTime);
+        if (dateTimeError) {
+            return res.status(400).json({ error: dateTimeError });
         }
 
         await availability.save();

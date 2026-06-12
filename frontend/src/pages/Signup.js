@@ -110,7 +110,7 @@ function Signup() {
           </div>
           
           {error && <div className="error-message" style={{ display: 'block' }}>{error}</div>}
-          {success && <div className="success-message" style={{ display: 'block' }}>{success}</div>}
+          {success && <div className="auth-success-message" style={{ display: 'block' }}>{success}</div>}
 
           <form onSubmit={handleSignup}>
             <div className="form-group">

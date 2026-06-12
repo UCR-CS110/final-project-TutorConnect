@@ -1,9 +1,15 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
+import { formatSubject, SUBJECT_OPTIONS } from '../constants/subjects';
+import { formatStoredDate, getDateInputValue, getDateTimeValidationError, isUpcomingAppointment } from '../utils/appointments';
 import '../styles/pages/Profile.css';
 
 const API_URL = 'http://localhost:5001/api';
+
+const normalizeSubjects = (subjects) => subjects.map((subject) => (
+  formatSubject(subject)
+));
 
 function Profile() {
   const [user, setUser] = useState(null);
@@ -36,14 +42,8 @@ function Profile() {
   }, []);
 
   const formatDate = (date) => {
-    if (!date) return 'No date';
-    return new Date(date).toLocaleDateString();
+    return formatStoredDate(date);
   };
-
-  const parseSubjects = (subjects) => subjects
-    .split(',')
-    .map((subject) => subject.trim())
-    .filter(Boolean);
 
   const loadDashboard = useCallback(async () => {
     setError('');
@@ -63,17 +63,17 @@ function Profile() {
           setTutorProfile(tutor);
           setTutorForm({
             bio: tutor.bio || '',
-            subjects: (tutor.subjects || []).join(', '),
+            subjects: normalizeSubjects(tutor.subjects || []),
             cost: tutor.cost || '',
             relatedWork: tutor.relatedWork || ''
           });
 
           const availabilityData = await request('/availability/see-all');
-          setAvailabilities(availabilityData.availabilities || []);
+          setAvailabilities((availabilityData.availabilities || []).filter(isUpcomingAppointment));
         } catch (tutorError) {
           setTutorProfile(null);
           setAvailabilities([]);
-          setTutorForm({ bio: '', subjects: '', cost: '', relatedWork: '' });
+          setTutorForm({ bio: '', subjects: [], cost: '', relatedWork: '' });
         }
       }
     } catch (loadError) {
@@ -109,12 +109,29 @@ function Profile() {
     setStatus('');
   };
 
+  const addTutorSubject = (subject) => {
+    if (!subject) return;
+    const currentSubjects = Array.isArray(tutorForm.subjects) ? tutorForm.subjects : [];
+    setTutorForm({
+      ...tutorForm,
+      subjects: [...currentSubjects, subject]
+    });
+  };
+
+  const removeTutorSubject = (subjectToRemove) => {
+    const currentSubjects = Array.isArray(tutorForm.subjects) ? tutorForm.subjects : [];
+    setTutorForm({
+      ...tutorForm,
+      subjects: currentSubjects.filter((subject) => subject !== subjectToRemove)
+    });
+  };
+
   const saveTutorProfile = async (e) => {
     e.preventDefault();
 
     const payload = {
       bio: tutorForm.bio,
-      subjects: parseSubjects(tutorForm.subjects),
+      subjects: tutorForm.subjects,
       cost: Number(tutorForm.cost) || 0,
       relatedWork: tutorForm.relatedWork
     };
@@ -127,7 +144,7 @@ function Profile() {
       setTutorProfile(data.tutor);
       setTutorForm({
         bio: data.tutor.bio || '',
-        subjects: (data.tutor.subjects || []).join(', '),
+        subjects: normalizeSubjects(data.tutor.subjects || []),
         cost: data.tutor.cost || '',
         relatedWork: data.tutor.relatedWork || ''
       });
@@ -144,6 +161,12 @@ function Profile() {
 
   const saveAvailability = async (e) => {
     e.preventDefault();
+    const dateTimeError = getDateTimeValidationError(availabilityForm, 'Availability');
+    if (dateTimeError) {
+      showError(dateTimeError);
+      return;
+    }
+
     try {
       await request('/availability/', {
         method: 'POST',
@@ -184,13 +207,15 @@ function Profile() {
   const isTutor = user.role === 'tutor';
   const roleTitle = isTutor ? 'Tutor' : 'Student';
   const firstLetter = user.username.charAt(0).toUpperCase();
-  const studentAppointments = appointments.appointments || [];
-  const tutorAppointments = appointments.tutoring || [];
+  const studentAppointments = (appointments.appointments || []).filter(isUpcomingAppointment);
+  const tutorAppointments = (appointments.tutoring || []).filter(isUpcomingAppointment);
   const sessionCount = studentAppointments.length + tutorAppointments.length;
   const ratingSource = isTutor ? tutorProfile : user;
   const ratingDisplay = ratingSource && ratingSource.numRatings > 0
     ? Number(ratingSource.ratingAverage || 0).toFixed(1)
     : 'NA';
+  const selectedSubjects = Array.isArray(tutorForm.subjects) ? tutorForm.subjects : [];
+  const availableSubjects = SUBJECT_OPTIONS.filter((subject) => !selectedSubjects.includes(subject));
 
   return (
     <>
@@ -271,12 +296,28 @@ function Profile() {
                 <div className="form-row">
                   <div className="form-group">
                     <label htmlFor="tutor-subjects">Subjects</label>
-                    <input
+                    <select
                       id="tutor-subjects"
-                      value={tutorForm.subjects}
-                      onChange={(e) => setTutorForm({ ...tutorForm, subjects: e.target.value })}
-                      placeholder="Math, chemistry, writing"
-                    />
+                      value=""
+                      onChange={(e) => addTutorSubject(e.target.value)}
+                    >
+                      <option value="">{availableSubjects.length ? 'Select a subject' : 'All subjects selected'}</option>
+                      {availableSubjects.map((subject) => (
+                        <option key={subject} value={subject}>{subject}</option>
+                      ))}
+                    </select>
+                    {selectedSubjects.length > 0 && (
+                      <div className="selected-subjects" aria-label="Selected subjects">
+                        {selectedSubjects.map((subject) => (
+                          <span className="selected-subject-pill" key={subject}>
+                            {subject}
+                            <button type="button" onClick={() => removeTutorSubject(subject)} aria-label={`Remove ${subject}`}>
+                              X
+                            </button>
+                          </span>
+                        ))}
+                      </div>
+                    )}
                   </div>
                   <div className="form-group">
                     <label htmlFor="tutor-cost">Hourly Cost</label>
@@ -314,6 +355,7 @@ function Profile() {
                       <input
                         id="availability-date"
                         type="date"
+                        min={getDateInputValue()}
                         value={availabilityForm.date}
                         onChange={(e) => setAvailabilityForm({ ...availabilityForm, date: e.target.value })}
                         required
@@ -403,7 +445,7 @@ function AppointmentsSection({ title, appointments, emptyText, onCancel, formatD
         {appointments.length === 0 && <p className="section-note">{emptyText}</p>}
         {appointments.map((appointment) => (
           <div className="list-card" key={appointment._id}>
-            <strong>{appointment.subject}</strong>
+            <strong>{formatSubject(appointment.subject)}</strong>
             <span>{formatDate(appointment.date)}</span>
             <span>{appointment.startTime} - {appointment.endTime}</span>
             <span>{appointment.location || appointment.meetingType || 'online'}</span>

@@ -71,6 +71,22 @@ body {
     border-radius: 4px;
 }
 
+.appointment-notice {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    align-self: stretch;
+    background: #fff7ec;
+    border: 1px solid #f28c28;
+    border-left: 5px solid #f28c28;
+    border-radius: 6px;
+    color: #2c3e50;
+    font-weight: 700;
+    line-height: 1.45;
+    padding: 0.85rem 1rem;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+
 .chat-bubble {
     max-width: 70%;
     padding: 0.75rem;

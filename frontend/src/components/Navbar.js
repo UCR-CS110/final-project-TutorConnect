@@ -39,7 +39,7 @@ function Navbar() {
         {!user && <li><Link to="/login">Login</Link></li>}
         {user && <li><Link to="/profile">Profile</Link></li>}
         {user && <li><Link to="/messages">Messages</Link></li>}
-        {user?.role === 'student' && <li><Link to="/sessions">My Sessions</Link></li>}
+        {user && <li><Link to="/sessions">My Sessions</Link></li>}
         {user?.role === 'student' && (
           <li>
             <form className="nav-search-form" onSubmit={handleNavSearch}>
