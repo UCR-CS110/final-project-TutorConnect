@@ -19,6 +19,7 @@ body {
     align-items: center;
     gap: 2rem;
     border: 1px solid #eef1f4;
+    
 }
 
 .profile-avatar {
@@ -127,7 +128,7 @@ body {
 .section h2 {
     color: #2c3e50;
     margin-bottom: 1.5rem;
-    border-bottom: 2px solid #667eea;
+    border-bottom: 2px solid #f28c28;
     padding-bottom: 0.5rem;
 }
 
