@@ -82,7 +82,12 @@ function Messages() {
       setConversations(conversationData.conversations || []);
 
       const selectedPartnerId = searchParams.get('with') || conversationData.conversations?.[0]?._id;
+
       if (selectedPartnerId) {
+        if (!searchParams.get('with')) {
+          setSearchParams({ with: selectedPartnerId });
+        }
+
         await loadConversation(selectedPartnerId);
       }
 
@@ -143,7 +148,7 @@ function Messages() {
         setError(loadError.message);
       }
     }
-  }, [loadConversation, navigate, request, searchParams]);
+  }, [loadConversation, navigate, request, searchParams, setSearchParams]);
 
   useEffect(() => {
     loadData();
