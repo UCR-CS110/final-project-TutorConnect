@@ -1,5 +1,21 @@
+
 # final-project-TutorConnect
+
+## Project Overview
+
 TutorConnect is a tutoring marketplace web app where students can find tutors, book sessions, message them, and leave reviews after completed sessions. Tutors can create a profile, list the subjects they teach, set availability, approve manual booking requests, message students, and rate students after sessions.
+
+## Team Member Contribution
+
+Caleb Mak: Nearly all of the backend code including exposing API endpoints and middleware.
+Anthony Vuong: Nearly all of the frontend code including styling and cookie management.
+Rafael Moran: Nearly all of the database code including setting up the cluster on the MongoDB website.
+
+All members did some work on other layers but mostly worked on their own layer.
+
+## Details on AI usage
+
+AI was used to generate the logo, explain code, explain syntax, explain high level logic, and proofread the readme and code. No code was merely pasted in at face value but all code was deeply understood.
 
 ## Tools used
 
