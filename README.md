@@ -7,9 +7,11 @@ TutorConnect is a tutoring marketplace web app where students can find tutors, b
 
 ## Team Member Contribution
 
-Caleb Mak: Nearly all of the backend code including exposing API endpoints and middleware.
-Anthony Vuong: Nearly all of the frontend code including styling and cookie management.
-Rafael Moran: Nearly all of the database code including setting up the cluster on the MongoDB website.
+**Caleb Mak**: Nearly all of the backend code including exposing API endpoints and middleware.
+
+**Anthony Vuong**: Nearly all of the frontend code including styling and cookie management.
+
+**Rafael Moran**: Nearly all of the database code including setting up the cluster on the MongoDB website.
 
 All members did some work on other layers but mostly worked on their own layer.
 
